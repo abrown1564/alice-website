@@ -340,25 +340,34 @@ html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(-
       linkLabelEl.attr('opacity', 0);
     });
 
+  const clamp = () => nodes.forEach(n => {
+    const pad = n.id.length * n.fs * 0.34 + n.r + 14;
+    n.x = Math.max(pad, Math.min(W - pad, n.x));
+    n.y = Math.max(n.r + 6, Math.min(H - 32, n.y));
+  });
+  const render = () => {
+    linkEl
+      .attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+      .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+    linkLabelEl
+      .attr('x', d => (d.source.x + d.target.x) / 2)
+      .attr('y', d => (d.source.y + d.target.y) / 2);
+    nodeG.attr('transform', d => `translate(${d.x},${d.y})`);
+  };
+
   const sim = d3.forceSimulation(nodes)
     .force('link',    d3.forceLink(links).id(d => d.id).distance(155).strength(0.35))
     .force('charge',  d3.forceManyBody().strength(d => -(d.r * 60 + 200)))
     .force('center',  d3.forceCenter(W / 2, H / 2))
     .force('collide', d3.forceCollide(d => d.id.length * d.fs * 0.34 + d.r + 10))
-    .on('tick', () => {
-      nodes.forEach(n => {
-        const pad = n.id.length * n.fs * 0.34 + n.r + 14;
-        n.x = Math.max(pad, Math.min(W - pad, n.x));
-        n.y = Math.max(n.r + 6, Math.min(H - 32, n.y));
-      });
-      linkEl
-        .attr('x1', d => d.source.x).attr('y1', d => d.source.y)
-        .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
-      linkLabelEl
-        .attr('x', d => (d.source.x + d.target.x) / 2)
-        .attr('y', d => (d.source.y + d.target.y) / 2);
-      nodeG.attr('transform', d => `translate(${d.x},${d.y})`);
-    });
+    .stop();
+
+  // Pre-run simulation silently so nodes appear already settled
+  for (let i = 0; i < 300; i++) { sim.tick(); clamp(); }
+  render();
+
+  // Resume with live ticks for drag interactivity
+  sim.on('tick', () => { clamp(); render(); }).restart();
   // Zoom & pan
   const zoom = d3.zoom()
     .scaleExtent([0.2, 4])
