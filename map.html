@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DD & Civic Tech Map — Alice Brown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC&text=⿻&display=swap" rel="stylesheet"/>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+:root {
+  --bg:     #0d0d0b;
+  --ink:    #e8e4d9;
+  --ink2:   #9a9585;
+  --ink3:   #5a5650;
+  --accent: #22d3ee;
+  --rule:   rgba(232,228,217,0.10);
+  --serif:  'Playfair Display', Georgia, serif;
+  --mono:   'DM Mono', monospace;
+  --sans:   'DM Sans', system-ui, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--ink); font-family: var(--sans); }
+
+.map-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  border-bottom: 1px solid var(--rule);
+  background: rgba(13,13,11,0.96);
+  backdrop-filter: blur(8px);
+  z-index: 10;
+}
+.map-nav a {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink3);
+  text-decoration: none;
+  letter-spacing: 0.06em;
+  transition: color 0.2s;
+}
+.map-nav a:hover { color: var(--accent); }
+.map-nav-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink3);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.map-hint {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink3);
+  letter-spacing: 0.04em;
+  opacity: 0.5;
+}
+
+#map-svg {
+  position: fixed;
+  top: 44px; left: 0;
+  width: 100%;
+  height: calc(100vh - 44px);
+}
+
+.legend {
+  position: fixed;
+  bottom: 1.75rem;
+  left: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  z-index: 10;
+  background: rgba(13,13,11,0.75);
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--rule);
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink3);
+  letter-spacing: 0.05em;
+}
+.legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+</style>
+</head>
+<body>
+
+<nav class="map-nav">
+  <a href="index.html">← Alice Brown</a>
+  <span class="map-nav-title">Deliberative Democracy &amp; Civic Tech</span>
+  <span class="map-hint">hover · drag · click to open</span>
+</nav>
+
+<svg id="map-svg"></svg>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#22d3ee"></div>Person</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#60a5fa"></div>Platform / Organisation</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#9a9585"></div>Concept</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div>Alice's work</div>
+</div>
+
+<script>
+(function initMap() {
+  const svgEl = document.getElementById('map-svg');
+  const W = window.innerWidth;
+  const H = window.innerHeight - 44;
+  const svg = d3.select(svgEl)
+    .attr('viewBox', `0 0 ${W} ${H}`)
+    .attr('preserveAspectRatio', 'xMidYMid meet');
+
+  const zoomLayer = svg.append('g');
+
+  const T = {
+    person:  { color: '#22d3ee', baseR: 8,  ff: "'Playfair Display',Georgia,serif",  fs: 17, fw: 400 },
+    org:     { color: '#60a5fa', baseR: 7,  ff: "'DM Sans',system-ui,sans-serif",    fs: 16, fw: 400 },
+    concept: { color: '#9a9585', baseR: 5,  ff: "'DM Mono',monospace",               fs: 14, fw: 300 },
+    alice:   { color: '#a78bfa', baseR: 9,  ff: "'Playfair Display',Georgia,serif",  fs: 18, fw: 700 },
+    symbol:  { color: '#22d3ee', baseR: 10, ff: "'Noto Sans SC',sans-serif",         fs: 52, fw: 700 },
+  };
+  const SM = { lg: 1.3, md: 1.0, sm: 0.78 };
+
+  const nodes = [
+    // People
+    { id: 'Audrey Tang',             type: 'person',  size: 'lg', url: 'https://en.wikipedia.org/wiki/Audrey_Tang' },
+    { id: 'Glen Weyl',               type: 'person',  size: 'md', url: 'https://en.wikipedia.org/wiki/Eric_Glen_Weyl' },
+    { id: 'Jürgen Habermas',         type: 'person',  size: 'md', url: 'https://en.wikipedia.org/wiki/J%C3%BCrgen_Habermas' },
+    { id: 'James Fishkin',           type: 'person',  size: 'md', url: 'https://en.wikipedia.org/wiki/James_S._Fishkin' },
+    { id: 'Hélène Landemore',        type: 'person',  size: 'md', url: 'https://en.wikipedia.org/wiki/H%C3%A9l%C3%A8ne_Landemore' },
+    { id: 'Danielle Allen',          type: 'person',  size: 'md', url: 'https://en.wikipedia.org/wiki/Danielle_Allen' },
+    { id: 'Archon Fung',             type: 'person',  size: 'md', url: 'https://en.wikipedia.org/wiki/Archon_Fung' },
+    { id: 'Elinor Ostrom',           type: 'person',  size: 'md', url: 'https://en.wikipedia.org/wiki/Elinor_Ostrom' },
+    { id: 'Colin Megill',            type: 'person',  size: 'sm', url: null },
+    { id: 'Tom Atlee',               type: 'person',  size: 'sm', url: 'https://en.wikipedia.org/wiki/Tom_Atlee' },
+    { id: 'Vitalik Buterin',         type: 'person',  size: 'sm', url: 'https://en.wikipedia.org/wiki/Vitalik_Buterin' },
+    { id: 'Yochai Benkler',          type: 'person',  size: 'sm', url: 'https://en.wikipedia.org/wiki/Yochai_Benkler' },
+    { id: 'Indy Johar',              type: 'person',  size: 'sm', url: 'https://darkmatterlabs.org/' },
+    { id: 'Immy Kaur',               type: 'person',  size: 'sm', url: 'https://civicsquare.cc/' },
+    { id: 'Kate Raworth',            type: 'person',  size: 'sm', url: 'https://www.kateraworth.com/' },
+    { id: 'Eli Pariser',             type: 'person',  size: 'sm', url: 'https://en.wikipedia.org/wiki/Eli_Pariser' },
+    // Orgs
+    { id: 'pol.is',                  type: 'org',     size: 'lg', url: 'https://pol.is/' },
+    { id: 'g0v',                     type: 'org',     size: 'md', url: 'https://g0v.tw/intl/en/' },
+    { id: 'vTaiwan',                 type: 'org',     size: 'lg', url: 'https://vtaiwan.tw/' },
+    { id: 'RadicalxChange',          type: 'org',     size: 'md', url: 'https://www.radicalxchange.org/' },
+    { id: 'Decidim',                 type: 'org',     size: 'md', url: 'https://decidim.org/' },
+    { id: "Citizens' Assembly",      type: 'org',     size: 'md', url: 'https://en.wikipedia.org/wiki/Citizens%27_Assembly_(Ireland)' },
+    { id: 'Scottish Citizens Assembly', type: 'org',  size: 'sm', url: 'https://www.citassembly.scot/' },
+    { id: 'newDemocracy',            type: 'org',     size: 'md', url: 'https://newdemocracy.com.au/' },
+    { id: 'CIP',                     type: 'org',     size: 'lg', url: 'https://cip.org/' },
+    { id: 'Gitcoin',                 type: 'org',     size: 'sm', url: 'https://gitcoin.co/' },
+    { id: 'Taiwan Digital Ministry', type: 'org',     size: 'md', url: 'https://moda.gov.tw/en/' },
+    { id: 'Open Culture Foundation', type: 'org',     size: 'sm', url: 'https://ocf.tw/en/' },
+    { id: 'Dark Matter Labs',        type: 'org',     size: 'md', url: 'https://darkmatterlabs.org/' },
+    { id: 'Civic Square',            type: 'org',     size: 'md', url: 'https://civicsquare.cc/' },
+    { id: 'DEAL',                    type: 'org',     size: 'sm', url: 'https://doughnuteconomics.org/' },
+    { id: 'mySociety',               type: 'org',     size: 'sm', url: 'https://www.mysociety.org/' },
+    // Concepts
+    { id: 'deliberative democracy',  type: 'concept', size: 'lg', url: 'https://en.wikipedia.org/wiki/Deliberative_democracy' },
+    { id: 'quadratic voting',        type: 'concept', size: 'md', url: 'https://en.wikipedia.org/wiki/Quadratic_voting' },
+    { id: 'sortition',               type: 'concept', size: 'md', url: 'https://en.wikipedia.org/wiki/Sortition' },
+    { id: 'participatory budgeting', type: 'concept', size: 'sm', url: 'https://en.wikipedia.org/wiki/Participatory_budgeting' },
+    { id: 'collective intelligence', type: 'concept', size: 'md', url: 'https://en.wikipedia.org/wiki/Collective_intelligence' },
+    { id: 'epistemic democracy',     type: 'concept', size: 'sm', url: null },
+    { id: 'liquid democracy',        type: 'concept', size: 'sm', url: 'https://en.wikipedia.org/wiki/Liquid_democracy' },
+    { id: 'plural governance',       type: 'concept', size: 'sm', url: 'https://en.wikipedia.org/wiki/Plurality_(philosophy)' },
+    { id: 'filter bubbles',          type: 'concept', size: 'sm', url: 'https://en.wikipedia.org/wiki/Filter_bubble' },
+    { id: 'open democracy',          type: 'concept', size: 'sm', url: null },
+    { id: 'commons theory',          type: 'concept', size: 'md', url: 'https://en.wikipedia.org/wiki/Commons' },
+    { id: 'peer production',         type: 'concept', size: 'sm', url: 'https://en.wikipedia.org/wiki/Commons-based_peer_production' },
+    { id: 'civic media',             type: 'concept', size: 'sm', url: null },
+    // Plurality
+    { id: '⿻',                       type: 'symbol',  size: 'lg', url: 'https://www.plurality.net/' },
+    // Alice's work
+    { id: 'DIM',                     type: 'alice',   size: 'md', url: null },
+    { id: 'FlexGov',                 type: 'alice',   size: 'md', url: null },
+    { id: 'Epistemic Commons',       type: 'alice',   size: 'md', url: null },
+  ].map(n => ({ ...n, ...T[n.type], r: T[n.type].baseR * SM[n.size] }));
+
+  const links = [
+    // People → Orgs
+    { source: 'Audrey Tang',           target: 'vTaiwan',               label: 'built' },
+    { source: 'Audrey Tang',           target: 'g0v',                   label: 'co-founded' },
+    { source: 'Audrey Tang',           target: 'Taiwan Digital Ministry',label: 'leads' },
+    { source: 'Colin Megill',          target: 'pol.is',                label: 'co-founded' },
+    { source: 'Glen Weyl',             target: 'RadicalxChange',        label: 'co-founded' },
+    { source: 'Vitalik Buterin',       target: 'Gitcoin',               label: 'inspired' },
+    { source: 'Indy Johar',            target: 'Dark Matter Labs',      label: 'co-founded' },
+    { source: 'Immy Kaur',             target: 'Civic Square',          label: 'co-founded' },
+    { source: 'Kate Raworth',          target: 'DEAL',                  label: 'co-founded' },
+    { source: 'Audrey Tang',           target: 'CIP',                   label: 'advises' },
+    { source: 'Open Culture Foundation', target: 'g0v',                 label: 'supports' },
+    // People → Concepts
+    { source: 'Jürgen Habermas',       target: 'deliberative democracy',label: 'theorised' },
+    { source: 'Danielle Allen',        target: 'deliberative democracy',label: 'theorised' },
+    { source: 'Archon Fung',           target: 'deliberative democracy',label: 'developed' },
+    { source: 'Archon Fung',           target: 'participatory budgeting',label: 'studied' },
+    { source: 'Danielle Allen',        target: 'epistemic democracy',   label: 'theorised' },
+    { source: 'Hélène Landemore',      target: 'open democracy',        label: 'theorised' },
+    { source: 'Hélène Landemore',      target: 'epistemic democracy',   label: 'theorised' },
+    { source: 'Elinor Ostrom',         target: 'commons theory',        label: 'theorised' },
+    { source: 'Yochai Benkler',        target: 'peer production',       label: 'theorised' },
+    { source: 'Yochai Benkler',        target: 'commons theory',        label: 'extended' },
+    { source: 'Glen Weyl',             target: 'quadratic voting',      label: 'theorised' },
+    { source: 'Vitalik Buterin',       target: 'quadratic voting',      label: 'co-developed' },
+    { source: 'James Fishkin',         target: 'sortition',             label: 'developed' },
+    { source: 'Eli Pariser',           target: 'filter bubbles',        label: 'named' },
+    { source: 'Tom Atlee',             target: 'collective intelligence',label: 'wrote on' },
+    { source: 'Audrey Tang',           target: 'plural governance',     label: 'practices' },
+    { source: 'Glen Weyl',             target: 'plural governance',     label: 'theorised' },
+    { source: 'Audrey Tang',           target: '⿻',                    label: 'co-authored' },
+    { source: 'Glen Weyl',             target: '⿻',                    label: 'co-authored' },
+    { source: '⿻',                    target: 'plural governance',     label: 'expresses' },
+    { source: '⿻',                    target: 'deliberative democracy',label: 'informs' },
+    { source: '⿻',                    target: 'RadicalxChange',        label: 'underpins' },
+    // Orgs → Concepts
+    { source: 'pol.is',                target: 'collective intelligence',label: 'enables' },
+    { source: 'vTaiwan',               target: 'deliberative democracy',label: 'implements' },
+    { source: 'Taiwan Digital Ministry', target: 'vTaiwan',             label: 'hosts' },
+    { source: 'Decidim',               target: 'participatory budgeting',label: 'implements' },
+    { source: "Citizens' Assembly",    target: 'sortition',             label: 'exemplifies' },
+    { source: 'Scottish Citizens Assembly', target: 'sortition',        label: 'exemplifies' },
+    { source: 'newDemocracy',          target: 'sortition',             label: 'practices' },
+    { source: 'Gitcoin',               target: 'quadratic voting',      label: 'implements' },
+    { source: 'RadicalxChange',        target: 'plural governance',     label: 'explores' },
+    { source: 'CIP',                   target: 'deliberative democracy',label: 'applies AI to' },
+    { source: 'CIP',                   target: 'collective intelligence',label: 'studies' },
+    { source: 'g0v',                   target: 'peer production',       label: 'exemplifies' },
+    { source: 'mySociety',             target: 'civic media',           label: 'builds tools for' },
+    { source: 'Civic Square',          target: 'commons theory',        label: 'applies' },
+    { source: 'DEAL',                  target: 'commons theory',        label: 'relates to' },
+    // Orgs → Orgs
+    { source: 'pol.is',                target: 'vTaiwan',               label: 'powers' },
+    { source: 'Dark Matter Labs',      target: 'Civic Square',          label: 'collaborates' },
+    { source: 'Civic Square',          target: 'DEAL',                  label: 'applies' },
+    // Alice → Concepts
+    { source: 'DIM',                   target: 'deliberative democracy',label: 'measures quality of' },
+    { source: 'DIM',                   target: 'filter bubbles',        label: 'tracks' },
+    { source: 'DIM',                   target: 'civic media',           label: 'contributes to' },
+    { source: 'FlexGov',               target: 'quadratic voting',      label: 'implements' },
+    { source: 'FlexGov',               target: 'liquid democracy',      label: 'extends' },
+    { source: 'Epistemic Commons',     target: 'collective intelligence',label: 'proposes' },
+    { source: 'Epistemic Commons',     target: 'deliberative democracy',label: 'infrastructure for' },
+    { source: 'Epistemic Commons',     target: 'commons theory',        label: 'draws on' },
+    // Alice ↔ Orgs
+    { source: 'pol.is',                target: 'DIM',                   label: 'related approach' },
+  ];
+
+  // Links
+  const linkEl = zoomLayer.append('g').selectAll('line')
+    .data(links).join('line')
+    .attr('stroke', 'rgb(232,228,217)')
+    .attr('stroke-opacity', 0.1)
+    .attr('stroke-width', 1);
+
+  // Edge labels — hidden by default, reveal on hover
+  const linkLabelEl = zoomLayer.append('g').selectAll('text')
+    .data(links).join('text')
+    .attr('text-anchor', 'middle')
+    .attr('dominant-baseline', 'middle')
+    .attr('fill', '#b8b4ac')
+    .attr('stroke', '#0d0d0b')
+    .attr('stroke-width', 3)
+    .attr('stroke-linejoin', 'round')
+    .style('paint-order', 'stroke fill')
+    .attr('font-size', 13)
+    .attr('font-family', "'DM Mono', monospace")
+    .attr('font-weight', 300)
+    .attr('opacity', 0)
+    .style('user-select', 'none')
+    .style('pointer-events', 'none')
+    .text(d => d.label);
+
+  // Nodes
+  const nodeG = zoomLayer.append('g').selectAll('g')
+    .data(nodes).join('g')
+    .style('cursor', d => d.url ? 'pointer' : 'default')
+    .call(d3.drag()
+      .on('start', (ev, d) => { d._dragged = false; if (!ev.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+      .on('drag',  (ev, d) => { d._dragged = true; d.fx = ev.x; d.fy = ev.y; })
+      .on('end',   (ev, d) => { if (!ev.active) sim.alphaTarget(0); d.fx = null; d.fy = null; })
+    )
+    .on('click', (ev, d) => {
+      if (!d._dragged && d.url) window.open(d.url, '_blank');
+    });
+
+  nodeG.append('circle')
+    .attr('r', d => d.r)
+    .attr('fill', d => d.color)
+    .attr('fill-opacity', 0.12)
+    .attr('stroke', d => d.color)
+    .attr('stroke-width', 1.5)
+    .attr('stroke-opacity', 0.75);
+
+  nodeG.append('text')
+    .attr('x', 0)
+    .attr('y', d => d.r + 5)
+    .attr('text-anchor', 'middle')
+    .attr('dominant-baseline', 'hanging')
+    .attr('fill', d => d.color)
+    .attr('font-size', d => d.fs)
+    .attr('font-family', d => d.ff)
+    .attr('font-weight', d => d.fw)
+    .attr('opacity', 0.88)
+    .style('user-select', 'none')
+    .text(d => d.id);
+
+  // Hover
+  nodeG
+    .on('mouseover', (ev, d) => {
+      const nbrs = new Set([d.id]);
+      links.forEach(l => {
+        if (l.source.id === d.id) nbrs.add(l.target.id);
+        if (l.target.id === d.id) nbrs.add(l.source.id);
+      });
+      nodeG.attr('opacity', n => nbrs.has(n.id) ? 1 : 0.08);
+      linkEl.attr('stroke-opacity', l =>
+        (l.source.id === d.id || l.target.id === d.id) ? 0.65 : 0.02);
+      linkLabelEl.attr('opacity', l =>
+        (l.source.id === d.id || l.target.id === d.id) ? 1 : 0);
+    })
+    .on('mouseout', () => {
+      nodeG.attr('opacity', 1);
+      linkEl.attr('stroke-opacity', 0.1);
+      linkLabelEl.attr('opacity', 0);
+    });
+
+  const sim = d3.forceSimulation(nodes)
+    .force('link',    d3.forceLink(links).id(d => d.id).distance(155).strength(0.35))
+    .force('charge',  d3.forceManyBody().strength(d => -(d.r * 60 + 200)))
+    .force('center',  d3.forceCenter(W / 2, H / 2))
+    .force('collide', d3.forceCollide(d => d.id.length * d.fs * 0.34 + d.r + 10))
+    .on('tick', () => {
+      nodes.forEach(n => {
+        const pad = n.id.length * n.fs * 0.34 + n.r + 14;
+        n.x = Math.max(pad, Math.min(W - pad, n.x));
+        n.y = Math.max(n.r + 6, Math.min(H - 32, n.y));
+      });
+      linkEl
+        .attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+        .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+      linkLabelEl
+        .attr('x', d => (d.source.x + d.target.x) / 2)
+        .attr('y', d => (d.source.y + d.target.y) / 2);
+      nodeG.attr('transform', d => `translate(${d.x},${d.y})`);
+    });
+  // Zoom & pan
+  const zoom = d3.zoom()
+    .scaleExtent([0.2, 4])
+    .on('zoom', event => zoomLayer.attr('transform', event.transform));
+  svg.call(zoom).on('dblclick.zoom', null);
+})();
+
+// Hide nav when embedded as iframe
+if (window.self !== window.top) {
+  const nav = document.querySelector('.map-nav');
+  if (nav) nav.style.display = 'none';
+  const s = document.getElementById('map-svg');
+  if (s) { s.style.top = '0'; s.style.height = '100vh'; }
+}
+</script>
+</body>
+</html>

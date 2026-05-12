@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Alice Brown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:     #0d0d0b;
+  --bg2:    #141412;
+  --bg3:    #1c1c19;
+  --ink:    #e8e4d9;
+  --ink2:   #9a9585;
+  --ink3:   #5a5650;
+  --accent: #22d3ee;
+  --accent2:#60a5fa;
+  --rule:   rgba(232,228,217,0.08);
+  --rule2:  rgba(232,228,217,0.14);
+  --serif:  'Playfair Display', Georgia, serif;
+  --mono:   'DM Mono', monospace;
+  --sans:   'DM Sans', system-ui, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 18px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 9998; opacity: 0.5;
+}
+
+/* ── Nav ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1.5rem 3rem;
+  background: rgba(13,13,11,0.88);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--rule);
+}
+.nav-name {
+  font-family: var(--mono); font-size: 13px; font-weight: 300;
+  color: var(--ink2); letter-spacing: 0.1em; text-decoration: none;
+}
+.nav-links { display: flex; gap: 2.5rem; list-style: none; }
+.nav-links a {
+  font-family: var(--mono); font-size: 13px; font-weight: 300;
+  color: var(--ink3); text-decoration: none;
+  letter-spacing: 0.06em; text-transform: uppercase; transition: color 0.18s;
+}
+.nav-links a:hover { color: var(--ink); }
+.nav-links a.nav-external { color: var(--accent); }
+.nav-links a.nav-external:hover { color: #7de8f7; }
+
+/* ── Hero ── */
+.hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1.7fr;
+  gap: 3rem;
+  align-items: center;
+  padding: 9rem 3rem 6rem;
+  border-bottom: 1px solid var(--rule);
+  position: relative; overflow: hidden;
+}
+.hero-inner { position: relative; z-index: 1; }
+.hero-graph-panel {
+  position: relative; z-index: 1;
+  border: 1px solid rgba(34,211,238,0.1);
+  background: rgba(20,20,18,0.4);
+  overflow: hidden;
+  align-self: stretch;
+  min-height: 520px;
+  display: flex;
+  flex-direction: column;
+}
+.hero-map-title {
+  font-family: var(--serif); font-size: 1.1rem; font-weight: 700;
+  color: var(--ink); letter-spacing: 0;
+  padding: 0.85rem 1.25rem;
+  border-bottom: 1px solid rgba(34,211,238,0.15);
+  flex-shrink: 0;
+}
+.hero-map-frame {
+  flex: 1; width: 100%; border: none; display: block; min-height: 0;
+}
+.hero-tag {
+  font-family: var(--mono); font-size: 13px; font-weight: 300;
+  color: var(--ink3); letter-spacing: 0.14em; text-transform: uppercase;
+  margin-bottom: 2rem;
+  display: flex; align-items: center; gap: 0.75rem;
+}
+.hero-tag::before {
+  content: ''; display: block; width: 20px; height: 1px; background: var(--ink3);
+}
+.hero-heading {
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  font-weight: 700; line-height: 1.15;
+  letter-spacing: -0.01em; color: var(--ink);
+  margin-bottom: 1.5rem;
+}
+.hero-heading em { font-style: italic; color: var(--ink2); }
+.hero-desc {
+  font-size: 1.05rem; font-weight: 300; color: var(--ink2);
+  line-height: 1.85; max-width: 580px; margin-bottom: 2.5rem;
+}
+.hero-desc strong { color: var(--ink); font-weight: 400; }
+.hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+.btn {
+  font-family: var(--mono); font-size: 13px; font-weight: 400;
+  letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none;
+  padding: 0.7rem 1.4rem; border: 1px solid; transition: all 0.18s;
+  display: inline-block;
+}
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.btn-primary:hover { background: transparent; color: var(--accent); }
+.btn-ghost { background: transparent; border-color: var(--ink3); color: var(--ink2); }
+.btn-ghost:hover { border-color: var(--ink2); color: var(--ink); }
+.hero-scroll {
+  margin-top: 4rem;
+  font-family: var(--mono); font-size: 12px; color: var(--ink3);
+  letter-spacing: 0.12em; display: flex; align-items: center; gap: 0.75rem;
+}
+.hero-scroll::after {
+  content: ''; display: block; width: 1px; height: 40px; background: var(--ink3); opacity: 0.4;
+}
+
+/* ── Featured DIM ── */
+.feature {
+  padding: 5rem 3rem;
+  border-bottom: 1px solid var(--rule);
+}
+.feature-card {
+  background: var(--bg2);
+  border: 1px solid rgba(34,211,238,0.18);
+  padding: 3rem;
+  position: relative;
+  overflow: hidden;
+}
+.feature-card::before {
+  content: '';
+  position: absolute; top: -30%; right: -10%;
+  width: 40%; height: 200%;
+  background: radial-gradient(ellipse, rgba(34,211,238,0.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+.feature-eyebrow {
+  font-family: var(--mono); font-size: 12px; font-weight: 300;
+  color: var(--accent); letter-spacing: 0.16em; text-transform: uppercase;
+  margin-bottom: 1.25rem;
+}
+.feature-title {
+  font-family: var(--serif); font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 700; color: var(--ink); line-height: 1.1;
+  margin-bottom: 1rem; letter-spacing: -0.01em;
+}
+.feature-question {
+  font-family: var(--serif); font-style: italic;
+  font-size: 1.1rem; color: var(--ink2); line-height: 1.7;
+  max-width: 680px; margin-bottom: 2.5rem;
+}
+.feature-stats {
+  display: flex; gap: 0; flex-wrap: wrap;
+  border-top: 1px solid rgba(34,211,238,0.12);
+  border-left: 1px solid rgba(34,211,238,0.12);
+  margin-bottom: 2rem;
+}
+.fstat {
+  flex: 1 1 120px;
+  padding: 1.25rem 1.5rem;
+  border-right: 1px solid rgba(34,211,238,0.12);
+  border-bottom: 1px solid rgba(34,211,238,0.12);
+}
+.fstat-num {
+  font-family: var(--serif); font-size: 2rem;
+  font-weight: 400; color: var(--accent); line-height: 1; margin-bottom: 0.3rem;
+}
+.fstat-label {
+  font-family: var(--mono); font-size: 12px; font-weight: 300;
+  color: var(--ink3); letter-spacing: 0.08em; text-transform: uppercase;
+}
+.feature-finding {
+  font-size: 0.9rem; font-weight: 300; color: var(--ink2);
+  line-height: 1.8; max-width: 640px; margin-bottom: 2rem;
+  border-left: 2px solid rgba(34,211,238,0.3); padding-left: 1.25rem;
+}
+
+/* ── Section base ── */
+section {
+  padding: 5rem 3rem;
+  border-bottom: 1px solid var(--rule);
+}
+.section-header {
+  display: flex; align-items: baseline; gap: 1.25rem; margin-bottom: 3.5rem;
+}
+.section-num {
+  font-family: var(--mono); font-size: 12px; font-weight: 300;
+  color: var(--ink3); letter-spacing: 0.12em;
+}
+.section-title {
+  font-family: var(--serif); font-size: 1.8rem; font-weight: 400;
+  color: var(--ink); letter-spacing: -0.01em;
+}
+
+/* ── Projects ── */
+.projects-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+}
+.project {
+  padding: 2.5rem;
+  border: 1px solid var(--rule);
+  border-collapse: collapse;
+  position: relative;
+  transition: background 0.22s;
+}
+.project:hover { background: var(--bg2); }
+.project-question {
+  font-family: var(--serif); font-style: italic;
+  font-size: 0.88rem; color: var(--ink3); line-height: 1.6;
+  margin-bottom: 1.25rem; letter-spacing: 0.01em;
+}
+.project-tag {
+  font-family: var(--mono); font-size: 12px; font-weight: 400;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 2px 7px; border: 1px solid;
+  display: inline-block; margin-bottom: 1rem;
+}
+.tag-research { color: var(--accent); border-color: rgba(34,211,238,0.4); }
+.tag-build    { color: var(--accent2); border-color: rgba(96,165,250,0.4); }
+.tag-both     { color: var(--ink2); border-color: var(--ink3); }
+.project-title {
+  font-family: var(--serif); font-size: 1.25rem; font-weight: 700;
+  color: var(--ink); line-height: 1.25; margin-bottom: 0.75rem;
+}
+.project-desc {
+  font-size: 0.88rem; font-weight: 300; color: var(--ink2);
+  line-height: 1.75; margin-bottom: 1.25rem;
+}
+.project-result {
+  font-family: var(--mono); font-size: 12px; font-weight: 300;
+  color: var(--accent); letter-spacing: 0.06em;
+}
+.project-meta {
+  font-family: var(--mono); font-size: 12px; font-weight: 300;
+  color: var(--ink3); letter-spacing: 0.06em; margin-top: 0.25rem;
+}
+.project-arrow {
+  position: absolute; top: 2.5rem; right: 2.5rem;
+  font-size: 1rem; color: var(--ink3); transition: color 0.18s, transform 0.18s;
+}
+.project:hover .project-arrow { color: var(--accent); transform: translate(3px,-3px); }
+a.project-arrow {
+  color: var(--accent);
+  border: 1px solid rgba(34,211,238,0.35);
+  padding: 3px 9px;
+  font-size: 0.95rem;
+  text-decoration: none;
+  border-radius: 3px;
+}
+a.project-arrow:hover {
+  background: rgba(34,211,238,0.08);
+  border-color: var(--accent);
+  transform: translate(2px, -2px);
+  color: var(--accent);
+}
+
+/* ── About ── */
+.about-grid {
+  display: grid; grid-template-columns: 220px 1fr; gap: 5rem; align-items: start;
+}
+.about-sidebar-label {
+  font-family: var(--mono); font-size: 12px; font-weight: 300;
+  color: var(--ink3); letter-spacing: 0.12em; text-transform: uppercase;
+  margin-bottom: 0.6rem; margin-top: 2rem;
+}
+.about-sidebar-label:first-child { margin-top: 0; }
+.about-sidebar-item {
+  font-size: 0.85rem; font-weight: 300; color: var(--ink2);
+  line-height: 1.6; padding: 0.4rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+.about-sidebar-item:last-child { border-bottom: none; }
+.about-main p {
+  font-size: 1rem; font-weight: 300; color: var(--ink2);
+  line-height: 1.9; margin-bottom: 1.5rem;
+}
+.about-main p:last-child { margin-bottom: 0; }
+.about-main strong { color: var(--ink); font-weight: 400; }
+.about-main em { font-family: var(--serif); font-style: italic; color: var(--ink); }
+
+/* ── Reading ── */
+.reading-section { padding: 4rem 3rem; border-bottom: 1px solid var(--rule); }
+.reading-label {
+  font-family: var(--mono); font-size: 12px; font-weight: 300;
+  color: var(--ink3); letter-spacing: 0.12em; text-transform: uppercase;
+  margin-bottom: 2rem;
+}
+.reading-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; }
+.reading-sublabel {
+  font-family: var(--mono); font-size: 13px; font-weight: 300;
+  color: var(--ink3); letter-spacing: 0.14em; text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+.reading-paper {
+  padding: 0.75rem 0; border-bottom: 1px solid var(--rule);
+}
+.reading-paper:first-of-type { border-top: 1px solid var(--rule); }
+.reading-paper-title {
+  font-size: 1rem; font-weight: 300; color: var(--ink2);
+  line-height: 1.5; margin-bottom: 0.2rem;
+}
+.reading-paper-title a { color: inherit; text-decoration: none; transition: color 0.15s; }
+.reading-paper-title a:hover { color: var(--accent); }
+.reading-paper-author {
+  font-family: var(--mono); font-size: 13px; color: var(--ink3); letter-spacing: 0.04em;
+}
+.books-row {
+  display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 0.5rem;
+}
+.book-item { width: 100px; }
+.book-cover {
+  width: 100px; height: auto; display: block;
+  border: 1px solid var(--rule); margin-bottom: 0.5rem;
+  transition: opacity 0.18s;
+}
+.book-cover:hover { opacity: 0.75; }
+.book-title {
+  font-family: var(--serif); font-size: 0.9rem; color: var(--ink2);
+  line-height: 1.3; margin-bottom: 0.2rem;
+}
+.book-title a { color: inherit; text-decoration: none; }
+.book-author {
+  font-family: var(--mono); font-size: 12px; color: var(--ink3);
+}
+
+/* ── Word of the day ── */
+.wotd {
+  padding: 1.5rem 3rem;
+  border-bottom: 1px solid var(--rule);
+  display: flex; align-items: baseline; gap: 1.5rem; flex-wrap: wrap;
+  background: var(--bg2);
+}
+.wotd-label {
+  font-family: var(--mono); font-size: 13px; font-weight: 300;
+  color: var(--ink3); letter-spacing: 0.12em; text-transform: uppercase;
+  white-space: nowrap; flex-shrink: 0;
+}
+.wotd-word {
+  font-family: var(--serif); font-size: 1.2rem; color: var(--accent); letter-spacing: 0.02em;
+}
+.wotd-pos {
+  font-family: var(--mono); font-size: 14px; font-weight: 300;
+  color: var(--ink3); font-style: italic;
+}
+.wotd-def {
+  font-size: 1rem; font-weight: 300; color: var(--ink2); line-height: 1.5;
+}
+
+/* ── Contact ── */
+.contact-section { padding: 5rem 3rem; border-bottom: 1px solid var(--rule); }
+.contact-line {
+  font-family: var(--serif);
+  font-size: clamp(1.6rem, 3.5vw, 2.8rem);
+  font-weight: 400; line-height: 1.25; color: var(--ink); margin-bottom: 2.5rem;
+}
+.contact-line em { font-style: italic; color: var(--ink2); }
+.contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+.contact-links { display: flex; flex-direction: column; gap: 0; }
+.contact-link {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1rem 0; border-bottom: 1px solid var(--rule);
+  text-decoration: none; color: var(--ink2); font-size: 0.9rem; font-weight: 300;
+  transition: color 0.18s;
+}
+.contact-link:first-child { border-top: 1px solid var(--rule); }
+.contact-link:hover { color: var(--accent); }
+.contact-link span {
+  font-family: var(--mono); font-size: 12px; color: var(--ink3);
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+
+/* ── Footer ── */
+footer {
+  padding: 1.75rem 3rem;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.footer-copy {
+  font-family: var(--mono); font-size: 12px; font-weight: 300;
+  color: var(--ink3); letter-spacing: 0.06em;
+}
+
+/* ── Animations ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up { opacity: 0; animation: fadeUp 0.7s ease forwards; }
+.d1 { animation-delay: 0.05s; }
+.d2 { animation-delay: 0.18s; }
+.d3 { animation-delay: 0.32s; }
+.d4 { animation-delay: 0.46s; }
+.d5 { animation-delay: 0.6s; }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  nav { padding: 1.25rem 1.5rem; }
+  .nav-links { gap: 1.5rem; }
+  .hero { grid-template-columns: 1fr; padding: 8rem 1.5rem 5rem; }
+  .hero-graph-panel { display: none; }
+  .feature { padding: 3rem 1.5rem; }
+  .feature-card { padding: 2rem 1.5rem; }
+  section { padding: 4rem 1.5rem; }
+  .projects-grid { grid-template-columns: 1fr; }
+  .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+  .reading-cols { grid-template-columns: 1fr; gap: 3rem; }
+  .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+  .wotd { padding: 1.25rem 1.5rem; }
+  footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+}
+@media (max-width: 600px) {
+  .feature-stats { flex-direction: column; }
+  .nav-links { gap: 1rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <a href="#" class="nav-name">alice brown</a>
+  <ul class="nav-links">
+    <li><a href="#work">Work</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="writing.html">Writing</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="map.html">Ideas Map</a></li>
+    <li><a href="https://abrown1564.github.io/dim/report.html" target="_blank" class="nav-external">DIM ↗</a></li>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag fade-up d1">researcher · builder · bristol, uk</div>
+    <h1 class="hero-heading fade-up d2">Alice Brown</h1>
+    <p class="hero-desc fade-up d3">
+      I'm a researcher and builder based in Bristol. I spent a decade in industry before returning to
+      university - recently graduating from UWE with an MSc in Data Science - and I'm now developing
+      my PhD proposal while building <strong>Unwrapped</strong>, a startup that grew out of the same
+      research questions. Most recently I built the <strong>Discourse Integrity Map</strong>, a project
+      I put together to support my application for the CIP fellowship - you can explore that work below.
+    </p>
+    <div class="hero-cta fade-up d4">
+      <a href="#work" class="btn btn-primary">See the work</a>
+      <a href="https://abrown1564.github.io/dim/report.html" target="_blank" class="btn btn-ghost">Discourse Integrity Map ↗</a>
+    </div>
+    <div class="hero-scroll fade-up d5">scroll</div>
+  </div>
+  <div class="hero-graph-panel fade-up d3">
+    <div class="hero-map-title">
+      My research interests map:
+      <a href="map.html" target="_blank" style="font-family:var(--mono);font-size:11px;font-weight:300;color:var(--accent);text-decoration:none;letter-spacing:0.08em;margin-left:1rem;opacity:0.8;">open in new tab ↗</a>
+    </div>
+    <iframe src="map.html" class="hero-map-frame" title="Research interests map" scrolling="no"></iframe>
+  </div>
+</div>
+
+<!-- Featured: DIM -->
+<div class="feature">
+  <div class="feature-card">
+    <div class="feature-eyebrow">Featured project · Live</div>
+    <h2 class="feature-title">Discourse Integrity Map</h2>
+    <p class="feature-question">
+      Can AI-assisted reasoning infrastructure make the logical quality of democratic discourse measurable, not just observable?
+    </p>
+    <div class="feature-stats">
+      <div class="fstat">
+        <div class="fstat-num">17</div>
+        <div class="fstat-label">debates processed</div>
+      </div>
+      <div class="fstat">
+        <div class="fstat-num">456</div>
+        <div class="fstat-label">claims classified</div>
+      </div>
+      <div class="fstat">
+        <div class="fstat-num">37</div>
+        <div class="fstat-label">canonical positions</div>
+      </div>
+      <div class="fstat">
+        <div class="fstat-num">5</div>
+        <div class="fstat-label">shared ground findings</div>
+      </div>
+    </div>
+    <p class="feature-finding">
+      Both sides of the UK/US wealth tax debate agree on five foundational claims - claims that get lost in
+      the argument about the instrument but which could anchor more productive deliberation.
+      DIM surfaces them by mapping argument quality across 17 debates: classifying rhetorical techniques,
+      extracting claims, and aggregating into canonical positions grounded in the Aristotelian dialectic/eristic distinction.
+    </p>
+    <a href="https://abrown1564.github.io/dim/report.html" target="_blank" class="btn btn-primary">Open DIM ↗</a>
+  </div>
+</div>
+
+<!-- Work -->
+<section id="work">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <h2 class="section-title">Work &amp; projects</h2>
+  </div>
+  <div class="projects-grid">
+
+    <div class="project">
+      <a href="https://abrown1564.github.io/dim/dissertation.html" target="_blank" class="project-arrow">↗</a>
+      <div class="project-tag tag-research">Research · NLP · MSc</div>
+      <div class="project-title">Propaganda Detection in Immigration Journalism</div>
+      <p class="project-desc">Classification pipeline grounding computational methods in critical discourse analysis, applied to UK immigration journalism. Developed a multi-label approach that surfaces rhetorical and structural patterns of media bias.</p>
+      <div class="project-result">MSc Data Science · Distinction</div>
+      <div class="project-meta">UWE Bristol · 2025</div>
+    </div>
+
+    <div class="project">
+      <a href="https://www.linkedin.com/company/upf-unwrapped/" target="_blank" class="project-arrow">↗</a>
+      <div class="project-tag tag-both">Research · Build · Early stage</div>
+      <div class="project-title">Unwrapped</div>
+      <p class="project-desc">Nutrition transparency platform in development with my co-founder, resident at UWE's Launch Space incubator. Built on OpenFoodFacts.</p>
+      <div class="project-result">Co-founder · Active</div>
+      <div class="project-meta">UWE Bristol Launch Space · 2024–ongoing</div>
+    </div>
+
+    <div class="project">
+      <a href="https://www.linkedin.com/company/flex-gov/" target="_blank" class="project-arrow">↗</a>
+      <div class="project-tag tag-both">Research · Build · MSc</div>
+      <div class="project-title">FlexGov</div>
+      <p class="project-desc">Adaptive DAO governance framework that selects between one-token-one-vote, quadratic, and one-person-one-vote mechanisms based on participation distribution. Anomaly detection flags adversarial actors. Applied to ENS, Gitcoin, and SushiSwap on-chain data. Still in development.</p>
+      <div class="project-result">MSc Machine Learning Project · Distinction</div>
+      <div class="project-meta">UWE Bristol · 2025</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- About -->
+<section id="about">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <h2 class="section-title">About</h2>
+  </div>
+  <div class="about-grid">
+    <div class="about-sidebar">
+      <div class="about-sidebar-label">Education</div>
+      <div class="about-sidebar-item">MSc Data Science (Distinction) · UWE Bristol · 2024-2025</div>
+      <div class="about-sidebar-item">MSc Entrepreneurship (Distinction) · University of Nottingham · 2015-2016</div>
+      <div class="about-sidebar-item">BA English Language &amp; Literature · University of Nottingham · 2012-2015</div>
+      <div class="about-sidebar-label">Experience</div>
+      <div class="about-sidebar-item">~7 years · Amazon marketplace strategy &amp; ops</div>
+      <div class="about-sidebar-item">Freelance editor &amp; proofreader · Upwork (since 2017)</div>
+      <div class="about-sidebar-item">🎵 Electronic music DJ · <a href="https://www.mixcloud.com/Cyanity/" target="_blank" style="color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(34,211,238,0.35);padding-bottom:1px;">Mixcloud ↗</a></div>
+      <div class="about-sidebar-label">Now</div>
+      <div class="about-sidebar-item">UWE Bristol Launch Space</div>
+      <div class="about-sidebar-item">PhD proposal development</div>
+      <div class="about-sidebar-item">Bristol, UK</div>
+    </div>
+    <div class="about-main">
+      <p>
+        My work has a through-line I didn't have the vocabulary to name for a long time:
+        my interests span <strong>epistemic infrastructure</strong>, <strong>deliberative and digital democracy</strong>,
+        <strong>knowledge organisation</strong>, <strong>graphs and knowledge systems</strong>, and <strong>collective and distributed intelligence</strong>.
+        You can see a WIP <a href="map.html" style="color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(34,211,238,0.35);padding-bottom:1px;">map of my research interests here</a>.
+      </p>
+      <p>
+        When I returned to university in 2024, I began to find language and concepts for ideas I'd been thinking about since 2015. First I discovered the <a href="https://aep.unc.edu/wp-content/uploads/sites/2121/2024/02/Applied-Epistemology-Bibliography-.pdf" target="_blank" style="color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(34,211,238,0.35);padding-bottom:1px;">applied epistemology literature</a>, and began to see a field that lined up with my long-standing interests around misinformation, trust, and the modern information environment. When I discovered the work of Audrey Tang, I began making connections between the tools I was building and the democratic infrastructure I was reading about - between measuring argument quality and creating the conditions for genuine deliberation.
+      </p>
+      <p>
+        Seven years of Amazon marketplace work taught me how commercial ecosystems are built - how they distribute value, create dependencies, and shape the behaviour of everyone inside them. That experience taught me to read systems - to notice how they're designed, who they serve and who they extract from.
+      </p>
+      <p>
+        I am strongly systems-oriented, and drawn to building tools that bridge divides and make information clearer.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Reading -->
+<div class="reading-section">
+  <div class="section-header">
+    <h2 class="section-title">Currently reading</h2>
+  </div>
+  <div class="reading-cols">
+    <div>
+      <div class="reading-sublabel">Papers</div>
+      <div class="reading-paper">
+        <div class="reading-paper-title"><a href="https://arxiv.org/pdf/2604.14807" target="_blank">The LLM Fallacy: Misattribution in AI-Assisted Cognitive Workflows ↗</a></div>
+        <div class="reading-paper-author">arXiv · 2026</div>
+      </div>
+      <div class="reading-paper">
+        <div class="reading-paper-title"><a href="https://academic.oup.com/ia/advance-article/doi/10.1093/ia/iiag048/8659036?login=false" target="_blank">Ignorance is power: the antiepistemology of international order ↗</a></div>
+        <div class="reading-paper-author">International Affairs · 2026</div>
+      </div>
+      <div class="reading-paper">
+        <div class="reading-paper-title"><a href="https://arxiv.org/abs/2604.15771" target="_blank">Skill-RAG: Failure-State-Aware Retrieval Augmentation via Hidden-State Probing and Skill Routing ↗</a></div>
+        <div class="reading-paper-author">Wei et al. · arXiv · 2026</div>
+      </div>
+      <div class="reading-paper">
+        <div class="reading-paper-title"><a href="https://philpapers.org/archive/LERTAF.pdf" target="_blank">The Abstraction Fallacy: Why AI Can Simulate But Not Instantiate Consciousness ↗</a></div>
+        <div class="reading-paper-author">Alexander Lerchner · PhilPapers</div>
+      </div>
+      <div class="reading-paper">
+        <div class="reading-paper-title"><a href="https://zenodo.org/records/19326432" target="_blank">The Gorgon Trap: Entropy, Cognitive Paralysis, and the Mechanics of Cognitive Warfare ↗</a></div>
+        <div class="reading-paper-author">Briggs, Danyk, Weiss · March 2026</div>
+      </div>
+    </div>
+    <div>
+      <div class="reading-sublabel">Books</div>
+      <div class="books-row">
+        <div class="book-item">
+          <a href="https://en.wikipedia.org/wiki/Doughnut_Economics:_Seven_Ways_to_Think_Like_a_21st_Century_Economist" target="_blank">
+            <img class="book-cover" src="https://upload.wikimedia.org/wikipedia/en/thumb/9/97/Doughnut_Economics_%282017_Raworth_book_cover%29.jpg/250px-Doughnut_Economics_%282017_Raworth_book_cover%29.jpg" alt="Doughnut Economics"/>
+          </a>
+          <div class="book-title"><a href="https://en.wikipedia.org/wiki/Doughnut_Economics:_Seven_Ways_to_Think_Like_a_21st_Century_Economist" target="_blank">Doughnut Economics</a></div>
+          <div class="book-author">Kate Raworth</div>
+        </div>
+        <div class="book-item">
+          <a href="https://www.millihill.co.uk/books/ultra-processed-women/" target="_blank">
+            <img class="book-cover" src="https://m.media-amazon.com/images/I/71yTWFEo3HL._SL1500_.jpg" alt="Ultra-Processed Women"/>
+          </a>
+          <div class="book-title"><a href="https://www.millihill.co.uk/books/ultra-processed-women/" target="_blank">Ultra-Processed Women</a></div>
+          <div class="book-author">Milli Hill</div>
+        </div>
+        <div class="book-item">
+          <a href="https://www.co-intelligence.institute/book-audrey" target="_blank">
+            <img class="book-cover" src="https://m.media-amazon.com/images/I/519kFXyYHeL.jpg" alt="Finding Light Through the Cracks"/>
+          </a>
+          <div class="book-title"><a href="https://www.co-intelligence.institute/book-audrey" target="_blank">Finding Light Through the Cracks</a></div>
+          <div class="book-author">Audrey Tang et al.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Word of the day -->
+<div class="wotd">
+  <span class="wotd-label">word of the day</span>
+  <span class="wotd-word" id="wotd-word"></span>
+  <span class="wotd-pos" id="wotd-pos"></span>
+  <span class="wotd-def" id="wotd-def"></span>
+</div>
+
+<!-- Contact -->
+<section id="contact" class="contact-section" style="border-bottom:1px solid var(--rule);">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h2 class="section-title">Get in touch</h2>
+  </div>
+  <div class="contact-grid">
+    <div>
+      <p class="contact-line">
+        Want to get in touch? Send me an email below.<br/>
+        <br/>
+        
+      </p>
+      <a href="mailto:apatemanbrown@outlook.com" class="btn btn-primary">apatemanbrown@outlook.com</a>
+    </div>
+    <div class="contact-links">
+      <a href="https://github.com/abrown1564" target="_blank" class="contact-link">
+        GitHub <span>Code ↗</span>
+      </a>
+      <a href="https://www.linkedin.com/in/alice-brown-5711a6125/" target="_blank" class="contact-link">
+        LinkedIn <span>CV ↗</span>
+      </a>
+      <a href="https://abrown1564.github.io/dim/report.html" target="_blank" class="contact-link">
+        Discourse Integrity Map <span>Live project ↗</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-copy">© 2026 Alice Brown. Bristol, UK.</div>
+</footer>
+
+<script>
+// Scroll animation
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.querySelectorAll('.project, .about-main p, .contact-line, .contact-link, .reading-paper, .book-item').forEach((el, i) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(16px)';
+        el.style.transition = `opacity 0.5s ease ${i * 0.07}s, transform 0.5s ease ${i * 0.07}s`;
+        requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
+      });
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('section, .reading-section, .feature').forEach(s => observer.observe(s));
+
+// Word of the day
+const words = [
+  { word: 'apophenia',       pos: 'n.',      def: 'The tendency to perceive meaningful connections between unrelated things.' },
+  { word: 'sonder',          pos: 'n.',      def: 'The realisation that each passerby has a life as vivid and complex as your own.' },
+  { word: 'episteme',        pos: 'n.',      def: 'The body of ideas that shape knowledge and thought in a particular period.' },
+  { word: 'kenopsia',        pos: 'n.',      def: 'The eerie, forlorn atmosphere of a place that is usually busy but is now abandoned.' },
+  { word: 'vellichor',       pos: 'n.',      def: 'The strange wistfulness of used bookshops - their air of faded knowledge and lives unlived.' },
+  { word: 'liminality',      pos: 'n.',      def: 'The quality of ambiguity occupying a threshold between two states.' },
+  { word: 'aporia',          pos: 'n.',      def: 'An irresolvable internal contradiction or logical disjunction in a text or argument.' },
+  { word: 'prolepsis',       pos: 'n.',      def: 'The representation of a future act or development as if already accomplished.' },
+  { word: 'synecdoche',      pos: 'n.',      def: 'A figure of speech in which a part is made to represent the whole, or vice versa.' },
+  { word: 'palimpsest',      pos: 'n.',      def: 'Something altered but still bearing visible traces of an earlier form.' },
+  { word: 'praxis',          pos: 'n.',      def: 'The practice and practical application of a theory or belief, as distinct from the theory itself.' },
+  { word: 'heterodox',       pos: 'adj.',    def: 'Not conforming with accepted or orthodox standards or beliefs.' },
+  { word: 'doxa',            pos: 'n.',      def: 'Common belief or popular opinion; in Bourdieu, the taken-for-granted assumptions of a field.' },
+  { word: 'interstitial',    pos: 'adj.',    def: 'Relating to or situated in the small intervening spaces between things.' },
+  { word: 'defamiliarise',   pos: 'v.',      def: 'To make something strange or unfamiliar so that it can be perceived freshly.' },
+  { word: 'entelechy',       pos: 'n.',      def: 'The condition of a thing whose essence is fully realised; actuality as opposed to potentiality.' },
+  { word: 'hysteresis',      pos: 'n.',      def: 'The tendency of a system to lag behind changes in the forces acting upon it.' },
+  { word: 'lacuna',          pos: 'n.',      def: 'A gap or missing portion - in a manuscript, argument, or body of knowledge.' },
+  { word: 'bricolage',       pos: 'n.',      def: 'Construction from a diverse range of things that happen to be available.' },
+  { word: 'abduction',       pos: 'n.',      def: 'Inference to the best explanation - reasoning from observation to the most likely cause.' },
+  { word: 'rhizome',         pos: 'n.',      def: 'In Deleuze and Guattari: a non-hierarchical network with no centre and multiple entry points.' },
+  { word: 'exaptation',      pos: 'n.',      def: 'The co-option of a feature for a use other than the one for which it was originally selected.' },
+  { word: 'ostranenie',      pos: 'n.',      def: 'Defamiliarisation - a literary device making the familiar seem strange to renew perception.' },
+  { word: 'agnotology',      pos: 'n.',      def: 'The study of culturally induced ignorance or doubt, particularly as produced by vested interests.' },
+  { word: 'pluripotent',     pos: 'adj.',    def: 'Having the potential to develop into many different forms; not yet specialised.' },
+  { word: 'assemblage',      pos: 'n.',      def: 'A collection of things gathered together; in theory, a complex of heterogeneous elements forming a system.' },
+  { word: 'iterability',     pos: 'n.',      def: "Derrida's term for the capacity of a sign to be repeated in new contexts, altering its meaning each time." },
+  { word: 'sublation',       pos: 'n.',      def: 'The Hegelian process of simultaneously cancelling, preserving, and lifting something to a higher level.' },
+  { word: 'indexicality',    pos: 'n.',      def: 'The property of a sign that is directly connected to its referent in the world, like a fingerprint.' },
+  { word: 'affordance',      pos: 'n.',      def: 'The relationship between an object and an agent that defines the possible actions the agent can take.' },
+  { word: 'polyphony',       pos: 'n.',      def: 'The simultaneous combination of distinct voices, in music or in a text where multiple perspectives coexist.' },
+  { word: 'anomie',          pos: 'n.',      def: "Social instability resulting from a breakdown of standards and values; Durkheim's term for normlessness." },
+  { word: 'catachresis',     pos: 'n.',      def: 'The use of a word in a way that is not its correct meaning, often to fill a gap in vocabulary.' },
+  { word: 'paracosm',        pos: 'n.',      def: 'A detailed imaginary world, often developed in childhood and maintained into adult life.' },
+  { word: 'meraki',          pos: 'n.',      def: 'Doing something with soul, creativity, and love; putting a piece of yourself into your work.' },
+  { word: 'umwelt',          pos: 'n.',      def: "The subjective universe of an organism - the environment as experienced from that creature's perspective." },
+  { word: 'apophatic',       pos: 'adj.',    def: 'Relating to the approach of defining something by what it is not, rather than by what it is.' },
+  { word: 'emergence',       pos: 'n.',      def: 'The process by which complex phenomena arise from simpler components in ways not predictable from the parts alone.' },
+  { word: 'heuristic',       pos: 'n./adj.', def: 'A practical approach to problem-solving that is not guaranteed to be optimal but is sufficient for the immediate goal.' },
+  { word: 'dialectic',       pos: 'n.',      def: 'The resolution of opposed arguments through a process of question and answer - or thesis, antithesis, synthesis.' },
+  { word: 'topology',        pos: 'n.',      def: 'The study of properties preserved under continuous deformations; in social theory, the structure of relationships.' },
+  { word: 'paratext',        pos: 'n.',      def: 'The elements surrounding a text - titles, prefaces, covers, footnotes - that frame how it is read.' },
+  { word: 'numinous',        pos: 'adj.',    def: 'Having a strong religious or spiritual quality; indicating the presence of a divinity.' },
+  { word: 'heterotopia',     pos: 'n.',      def: "Foucault's term for spaces that exist outside of normal social order - mirrors, prisons, ships, gardens." },
+  { word: 'zetetic',         pos: 'adj.',    def: 'Proceeding by inquiry; empirical - from the Greek for "to seek".' },
+  { word: 'simulacrum',      pos: 'n.',      def: "A copy of something that no longer has an original - or Baudrillard's term for signs that have replaced reality." },
+  { word: 'agnotology',      pos: 'n.',      def: 'The study of culturally induced ignorance or doubt, particularly the kind manufactured by vested interests.' },
+  { word: 'apercus',         pos: 'n.',      def: 'A brief remark or insight that illuminates a larger truth.' },
+  { word: 'weltanschauung',  pos: 'n.',      def: 'A comprehensive worldview or philosophy of life - a framework through which everything is interpreted.' },
+  { word: 'enshittification',pos: 'n.',      def: "Doctorow's term for the decay of online platforms: first they lure users, then exploit them, then squeeze both." },
+  { word: 'coherence collapse',pos: 'n.',    def: 'The point at which a narrative or belief system can no longer absorb its internal contradictions - when meaning fragments rather than coheres.' },
+  { word: 'doublethink',     pos: 'n.',      def: "Orwell's term for the trained ability to hold two contradictory beliefs simultaneously and accept both as true." },
+];
+const w = words[Math.floor(Date.now() / 86400000) % words.length];
+document.getElementById('wotd-word').textContent = w.word;
+document.getElementById('wotd-pos').textContent  = w.pos;
+document.getElementById('wotd-def').textContent  = w.def;
+</script>
+</body>
+</html>

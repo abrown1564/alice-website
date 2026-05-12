@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Writing — Alice Brown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:     #0d0d0b;
+  --bg2:    #141412;
+  --ink:    #e8e4d9;
+  --ink2:   #9a9585;
+  --ink3:   #5a5650;
+  --accent: #22d3ee;
+  --rule:   rgba(232,228,217,0.10);
+  --serif:  'Playfair Display', Georgia, serif;
+  --mono:   'DM Mono', monospace;
+  --sans:   'DM Sans', system-ui, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 18px;
+  line-height: 1.7;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0.5;
+}
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 3rem;
+  border-bottom: 1px solid var(--rule);
+  background: rgba(13,13,11,0.85);
+  backdrop-filter: blur(12px);
+}
+.nav-name {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--ink2);
+  letter-spacing: 0.08em;
+  text-decoration: none;
+}
+.nav-links {
+  display: flex;
+  gap: 2.5rem;
+  list-style: none;
+}
+.nav-links a {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--ink3);
+  text-decoration: none;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--accent); }
+.main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8rem 3rem 5rem;
+}
+.placeholder {
+  max-width: 560px;
+}
+.placeholder-tag {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--accent);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.placeholder-tag::before {
+  content: '';
+  display: block;
+  width: 24px; height: 1px;
+  background: var(--accent);
+}
+h1 {
+  font-family: var(--serif);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--ink);
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.01em;
+}
+.placeholder-body {
+  font-size: 1rem;
+  font-weight: 300;
+  color: var(--ink2);
+  line-height: 1.8;
+}
+.back-link {
+  display: inline-block;
+  margin-top: 2.5rem;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--ink3);
+  text-decoration: none;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.back-link:hover { color: var(--accent); }
+footer {
+  padding: 2rem 3rem;
+  border-top: 1px solid var(--rule);
+}
+.footer-copy {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--ink3);
+  letter-spacing: 0.06em;
+}
+@media (max-width: 700px) {
+  nav { padding: 1.25rem 1.5rem; }
+  .nav-links { gap: 1.5rem; }
+  .main { padding: 7rem 1.5rem 4rem; }
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-name">alice brown</a>
+  <ul class="nav-links">
+    <li><a href="index.html#work">Work</a></li>
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="writing.html" class="active">Writing</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+    <li><a href="map.html">Ideas Map</a></li>
+  </ul>
+</nav>
+
+<main class="main">
+  <div class="placeholder">
+    <div class="placeholder-tag">Writing</div>
+    <h1>Work in progress.</h1>
+    <p class="placeholder-body">
+      New essays and notes will be published here. Topics will span epistemic infrastructure,
+      deliberative systems, platform power, and the political economy of knowledge.
+    </p>
+    <a href="index.html" class="back-link">← Back to home</a>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-copy">© 2026 Alice Brown. Bristol, UK.</div>
+</footer>
+</body>
+</html>
