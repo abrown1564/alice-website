@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CV — Alice Pateman-Brown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:     #0d0d0b;
+  --bg2:    #141412;
+  --ink:    #e8e4d9;
+  --ink2:   #9a9585;
+  --ink3:   #5a5650;
+  --accent: #22d3ee;
+  --rule:   rgba(232,228,217,0.08);
+  --rule2:  rgba(232,228,217,0.14);
+  --serif:  'Playfair Display', Georgia, serif;
+  --mono:   'DM Mono', monospace;
+  --sans:   'DM Sans', system-ui, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 9998; opacity: 0.5;
+}
+
+/* ── Nav ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1.5rem 3rem;
+  background: rgba(13,13,11,0.88);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--rule);
+}
+.nav-name {
+  font-family: var(--mono); font-size: 13px; font-weight: 300;
+  color: var(--ink2); letter-spacing: 0.1em; text-decoration: none;
+}
+.nav-links { display: flex; gap: 2.5rem; list-style: none; }
+.nav-links a {
+  font-family: var(--mono); font-size: 13px; font-weight: 300;
+  color: var(--ink3); text-decoration: none;
+  letter-spacing: 0.06em; text-transform: uppercase; transition: color 0.18s;
+}
+.nav-links a:hover { color: var(--ink); }
+.nav-links a.active { color: var(--accent); }
+.nav-links a.nav-external { color: var(--accent); }
+.nav-links a.nav-external:hover { color: #7de8f7; }
+
+/* ── Page container ── */
+.cv-wrap { max-width: 960px; margin: 0 auto; padding: 9rem 3rem 6rem; }
+
+/* ── CV Header ── */
+.cv-header {
+  padding-bottom: 3rem;
+  border-bottom: 1px solid var(--rule2);
+  margin-bottom: 3rem;
+}
+.cv-name {
+  font-family: var(--serif); font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700; color: var(--ink); letter-spacing: -0.01em; margin-bottom: 0.5rem;
+}
+.cv-tagline {
+  font-family: var(--mono); font-size: 13px; font-weight: 300;
+  color: var(--accent); letter-spacing: 0.1em; margin-bottom: 1rem;
+}
+.cv-contact {
+  display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem;
+  font-family: var(--mono); font-size: 13px; font-weight: 300;
+  color: var(--ink3); margin-bottom: 1.75rem;
+}
+.cv-contact a { color: var(--ink2); text-decoration: none; transition: color 0.15s; }
+.cv-contact a:hover { color: var(--accent); }
+.cv-actions { display: flex; gap: 0.75rem; }
+
+/* ── Buttons ── */
+.btn {
+  font-family: var(--mono); font-size: 12px; font-weight: 400;
+  letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none;
+  padding: 0.6rem 1.2rem; border: 1px solid; transition: all 0.18s;
+  display: inline-block; cursor: pointer; background: transparent;
+}
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.btn-primary:hover { background: transparent; color: var(--accent); }
+.btn-ghost { border-color: var(--ink3); color: var(--ink2); }
+.btn-ghost:hover { border-color: var(--ink2); color: var(--ink); }
+
+/* ── Section labels ── */
+.cv-section-label {
+  font-family: var(--mono); font-size: 11px; font-weight: 300;
+  color: var(--accent); letter-spacing: 0.18em; text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  display: flex; align-items: center; gap: 0.75rem;
+}
+.cv-section-label::before {
+  content: ''; display: block; width: 20px; height: 1px; background: var(--accent); opacity: 0.6;
+}
+.cv-section-title {
+  font-family: var(--serif); font-size: 1.5rem; font-weight: 400;
+  color: var(--ink); letter-spacing: -0.01em; margin-bottom: 1.75rem;
+}
+
+/* ── Profile (full-width) ── */
+.cv-profile {
+  margin-bottom: 3rem;
+  padding-bottom: 3rem;
+  border-bottom: 1px solid var(--rule);
+}
+.cv-prose p { font-size: 1rem; font-weight: 300; color: var(--ink2); line-height: 1.85; }
+.cv-prose strong { color: var(--ink); font-weight: 400; }
+
+/* ── Two-column body ── */
+.cv-body {
+  display: grid;
+  grid-template-columns: 1fr 295px;
+  gap: 3.5rem;
+  align-items: start;
+}
+
+/* ── Main column sections ── */
+.cv-section {
+  margin-bottom: 3rem;
+  padding-bottom: 3rem;
+  border-bottom: 1px solid var(--rule);
+}
+.cv-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+/* ── Achievement paragraphs ── */
+.cv-achieve p {
+  font-size: 0.95rem; font-weight: 300; color: var(--ink2);
+  line-height: 1.8; margin-bottom: 0.7rem;
+}
+.cv-achieve p:last-child { margin-bottom: 0; }
+.cv-achieve p strong { color: var(--ink); font-weight: 500; }
+
+/* ── Project items ── */
+.cv-project {
+  margin-bottom: 2rem; padding-bottom: 2rem;
+  border-bottom: 1px solid var(--rule);
+}
+.cv-project:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.cv-project-header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.3rem;
+}
+.cv-project-title {
+  font-family: var(--serif); font-size: 1rem; font-weight: 700; color: var(--ink);
+}
+.cv-project-title a {
+  color: var(--accent); text-decoration: none; font-size: 0.82rem;
+  font-family: var(--mono); font-weight: 300; margin-left: 0.75rem;
+  border-bottom: 1px solid rgba(34,211,238,0.3);
+}
+.cv-project-meta {
+  font-family: var(--mono); font-size: 12px; font-weight: 300;
+  color: var(--ink3); letter-spacing: 0.04em;
+}
+.cv-project-sub {
+  font-family: var(--mono); font-size: 11.5px; font-weight: 300;
+  color: var(--ink3); letter-spacing: 0.03em; margin-bottom: 0.7rem;
+}
+
+/* ── Job items ── */
+.cv-job {
+  margin-bottom: 1.75rem; padding-bottom: 1.75rem;
+  border-bottom: 1px solid var(--rule);
+}
+.cv-job:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.cv-job-header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  flex-wrap: wrap; gap: 0.25rem 1rem; margin-bottom: 0.2rem;
+}
+.cv-job-title {
+  font-family: var(--serif); font-size: 1rem; font-weight: 700; color: var(--ink);
+}
+.cv-job-dates {
+  font-family: var(--mono); font-size: 12px; font-weight: 300;
+  color: var(--ink3); white-space: nowrap;
+}
+.cv-job-company {
+  font-family: var(--mono); font-size: 12px; font-weight: 300;
+  color: var(--ink2); margin-bottom: 0.6rem;
+}
+
+/* ── Sidebar panel ── */
+.cv-sidebar {
+  background: var(--bg2);
+  padding: 1.75rem;
+  border: 1px solid var(--rule2);
+  border-radius: 3px;
+  position: sticky;
+  top: 6rem;
+}
+.cv-sidebar-section {
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--rule);
+}
+.cv-sidebar-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.cv-sidebar-title {
+  font-family: var(--mono); font-size: 10px; font-weight: 400;
+  color: var(--accent); letter-spacing: 0.18em; text-transform: uppercase;
+  margin-bottom: 1.1rem;
+  display: flex; align-items: center; gap: 0.6rem;
+}
+.cv-sidebar-title::before {
+  content: ''; display: block; width: 14px; height: 1px; background: var(--accent); opacity: 0.6;
+}
+
+/* ── Skill bars ── */
+.skill-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 0.6rem;
+}
+.skill-row:last-child { margin-bottom: 0; }
+.skill-name {
+  font-family: var(--mono); font-size: 11.5px; font-weight: 300;
+  color: var(--ink2); letter-spacing: 0.02em;
+}
+.skill-dots { display: flex; gap: 3px; }
+.skill-dot { width: 6px; height: 6px; border-radius: 1px; display: block; }
+.skill-dot.on { background: var(--accent); }
+.skill-dot.off { background: var(--ink3); opacity: 0.25; }
+
+/* ── Sidebar text groups ── */
+.skill-group { margin-bottom: 0.9rem; }
+.skill-group:last-child { margin-bottom: 0; }
+.skill-group-label {
+  font-family: var(--mono); font-size: 10.5px; font-weight: 400;
+  color: var(--ink3); letter-spacing: 0.07em; text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+.skill-group-value {
+  font-size: 0.83rem; font-weight: 300; color: var(--ink2); line-height: 1.6;
+}
+
+/* ── Sidebar education ── */
+.sidebar-degree { margin-bottom: 1.2rem; }
+.sidebar-degree:last-child { margin-bottom: 0; }
+.sidebar-degree-title {
+  font-family: var(--serif); font-size: 0.9rem; font-weight: 700;
+  color: var(--ink); margin-bottom: 0.1rem;
+}
+.sidebar-degree-inst {
+  font-family: var(--mono); font-size: 11px; color: var(--ink3);
+  margin-bottom: 0.15rem;
+}
+.sidebar-degree-detail {
+  font-size: 0.82rem; font-weight: 300; color: var(--ink2); line-height: 1.5;
+}
+
+/* ── Sidebar certs ── */
+.sidebar-cert {
+  font-size: 0.83rem; font-weight: 300; color: var(--ink2);
+  line-height: 1.6; padding-left: 0.9rem; position: relative;
+  margin-bottom: 0.35rem;
+}
+.sidebar-cert:last-child { margin-bottom: 0; }
+.sidebar-cert::before { content: '—'; position: absolute; left: 0; color: var(--ink3); }
+.sidebar-cert strong {
+  font-family: var(--mono); font-size: 10.5px; font-weight: 400;
+  color: var(--accent); margin-right: 0.3rem; letter-spacing: 0.04em;
+}
+
+/* ── Footer ── */
+footer { padding: 2rem 3rem; border-top: 1px solid var(--rule); text-align: center; }
+.footer-copy {
+  font-family: var(--mono); font-size: 13px; font-weight: 300;
+  color: var(--ink3); letter-spacing: 0.06em;
+}
+
+/* ── Responsive ── */
+@media (max-width: 760px) {
+  nav { padding: 1.25rem 1.5rem; }
+  .nav-links { gap: 1.5rem; }
+  .cv-wrap { padding: 7rem 1.5rem 4rem; }
+  .cv-body { grid-template-columns: 1fr; }
+  .cv-sidebar { position: static; }
+  .cv-project-header, .cv-job-header { flex-direction: column; }
+}
+
+/* ── Print ── */
+@media print {
+  body { background: #fff; color: #111; font-size: 11pt; }
+  body::before { display: none; }
+  nav, .cv-actions, footer { display: none; }
+  .cv-wrap { padding: 1rem; max-width: 100%; }
+  .cv-body { grid-template-columns: 1fr 220px; gap: 2rem; }
+  .cv-header, .cv-profile { border-bottom-color: #ccc; }
+  .cv-section { border-bottom-color: #ddd; }
+  .cv-project { border-bottom-color: #eee; }
+  .cv-job { border-bottom-color: #eee; }
+  .cv-name { color: #111; font-size: 22pt; }
+  .cv-tagline, .cv-section-label, .cv-sidebar-title { color: #1a6b7c; }
+  .cv-section-label::before, .cv-sidebar-title::before { background: #1a6b7c; }
+  .cv-section-title, .cv-project-title, .cv-job-title, .sidebar-degree-title { color: #111; }
+  .cv-prose p, .cv-achieve p, .sidebar-degree-detail, .skill-group-value, .sidebar-cert { color: #333; }
+  .cv-project-meta, .cv-project-sub, .cv-job-dates, .cv-job-company, .sidebar-degree-inst { color: #555; }
+  .cv-project-title a { color: #1a6b7c; border-bottom-color: #1a6b7c; }
+  .cv-sidebar { background: #f5f5f5; border-color: #ccc; position: static; padding: 1.25rem; }
+  .cv-sidebar-section { border-bottom-color: #ddd; }
+  .skill-dot.on { background: #1a6b7c; }
+  .skill-dot.off { background: #ccc; opacity: 1; }
+  .sidebar-cert strong { color: #1a6b7c; }
+  a { text-decoration: none; }
+  .cv-section, .cv-project, .cv-job, .sidebar-degree { page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-name">alice brown</a>
+  <ul class="nav-links">
+    <li><a href="index.html#work">Work</a></li>
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="writing.html">Writing</a></li>
+    <li><a href="cv.html" class="active">CV</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+    <li><a href="map.html">Ideas Map</a></li>
+    <li><a href="https://abrown1564.github.io/dim/report.html" target="_blank" class="nav-external">DIM ↗</a></li>
+  </ul>
+</nav>
+
+<div class="cv-wrap">
+
+  <!-- Header -->
+  <div class="cv-header">
+    <div class="cv-name">Alice Pateman-Brown</div>
+    <div class="cv-tagline">MSc Data Science · Distinction · UWE Bristol</div>
+    <div class="cv-contact">
+      <a href="mailto:apatemanbrown@outlook.com">apatemanbrown@outlook.com</a>
+      <a href="https://github.com/abrown1564" target="_blank">github.com/abrown1564</a>
+      <a href="https://www.linkedin.com/in/alice-brown-5711a6125/" target="_blank">LinkedIn</a>
+      <span>Bristol, UK</span>
+    </div>
+    <div class="cv-actions">
+      <button class="btn btn-primary" onclick="window.print()">Download / Print PDF</button>
+      <a href="https://abrown1564.github.io/dim/report.html" target="_blank" class="btn btn-ghost">Discourse Integrity Map ↗</a>
+    </div>
+  </div>
+
+  <!-- Profile (full width) -->
+  <div class="cv-profile">
+    <div class="cv-section-label">01</div>
+    <h2 class="cv-section-title">Profile</h2>
+    <div class="cv-prose">
+      <p>
+        Researcher building applied tools at the intersection of <strong>epistemic infrastructure</strong>, <strong>deliberative democracy</strong>, <strong>AI systems design</strong>, and <strong>blockchain technology</strong>. MSc Data Science with Distinction (UWE Bristol, 2025). My work explores how we build the conditions for genuine reasoning, participation, and collective sensemaking through civic technology and public-facing, research-led software. Seven years in large-scale commercial platform operations gave me a practical understanding of how automated systems shape incentives, behaviour, and visibility: dynamics that increasingly structure epistemic and political life.
+      </p>
+    </div>
+  </div>
+
+  <!-- Two-column body -->
+  <div class="cv-body">
+
+    <!-- Main column -->
+    <div class="cv-main">
+
+      <!-- Key Projects -->
+      <div class="cv-section">
+        <div class="cv-section-label">02</div>
+        <h2 class="cv-section-title">Key Projects</h2>
+
+        <div class="cv-project">
+          <div class="cv-project-header">
+            <div class="cv-project-title">
+              Discourse Integrity Map
+              <a href="https://abrown1564.github.io/dim/report.html" target="_blank">live project ↗</a>
+            </div>
+            <div class="cv-project-meta">2026</div>
+          </div>
+          <div class="cv-project-sub">Computational research project · CIP fellowship application</div>
+          <div class="cv-achieve">
+            <p><strong>Project Summary:</strong> Can we identify common ground and characterise disagreement beneath rhetoric by mapping debate spaces and aggregating claims into canonical positions? The live project explores this through an experimental "deliberative debating" interface, with accompnying visualisations, report, and corpus.</p>
+            <p><strong>Pipeline & Implementation:</strong> Designed and implemented a five-stage computational pipeline for mapping argument structure and rhetorical patterns in public debate: transcript ingestion, claim extraction, discourse skeletonisation, rhetorical technique classification, and canonical position aggregation. Analysed 17 debates and speeches, extracting 390 rhetorical techniques against an original 191-category taxonomy and classifying 456 claims from the corpus.</p>
+            <p><strong>Methodology & Findings:</strong> Theoretically grounded in the Aristotelian distinction between dialectic and eristic argument, the project aims to foreground how arguments are made, and the underlying structure of debate, rather than whether conclusions are correct. The system identified 37 canonical positions across wealth tax discourse, including 5 points of cross-partisan agreement. Longer term, the project aims to explore whether identified points of contention can function as deliberative "springboards" toward more constructive public reasoning.</p>
+          </div>
+        </div>
+
+        <div class="cv-project">
+          <div class="cv-project-header">
+            <div class="cv-project-title">
+              TruthSpace: NLP Propaganda Detection &amp; Media Bias Platform
+              <a href="https://abrown1564.github.io/dim/dissertation.html" target="_blank">dissertation ↗</a>
+            </div>
+            <div class="cv-project-meta">2025</div>
+          </div>
+          <div class="cv-project-sub">MSc Dissertation · UWE Bristol · Distinction · Examiner feedback: "highly innovative"</div>
+          <div class="cv-achieve">
+            <p><strong>Project Summary: </strong> Can machine learning detect rhetorical manipulation techniques in news coverage of immigration, and can those detections be combined with bias and sentiment data into an interface that helps readers think critically rather than telling them what to think?</p>
+            <p><strong>Architecture:</strong> End-to-end NLP pipeline using python scripts to collect + process 854 UK/US news articles — revived SemEval-2020 propaganda span detection in a containerised 2025 environment, enriched with VADER, TextBlob, spaCy NER, and bias ratings from Ad Fontes, MBFC, AllSides, and Ground News.</p>
+            <p><strong>Front-end Design:</strong> Chart.js interface surfacing rhetorical manipulation patterns and sentiment.</p>
+          </div>
+        </div>
+
+        <div class="cv-project">
+          <div class="cv-project-header">
+            <div class="cv-project-title">
+              Unwrapped: Nutrition Transparency Platform (in development)
+              <a href="https://www.linkedin.com/company/upf-unwrapped/" target="_blank">linkedin ↗</a>
+            </div>
+            <div class="cv-project-meta">2024 – present</div>
+          </div>
+          <div class="cv-project-sub">Co-Founder · UWE Bristol Launch Space</div>
+          <div class="cv-achieve">
+            <p><strong>Mission:</strong> Public-good platform connecting consumers to peer-reviewed evidence about food ingredients, with explicit transparency about funding sources and conflicts of interest behind scientific claims.</p>
+            <p><strong>Technical:</strong> Collaborative React/Next.js MVP with barcode scanning (Quagga2), OpenFoodFacts API integration, ingredient risk lookup, and NOVA classification. PhD proposal in development at UWE Bristol.</p>
+          </div>
+        </div>
+
+        <div class="cv-project">
+          <div class="cv-project-header">
+            <div class="cv-project-title">
+              FlexGov: Adaptive DAO Voting System
+              <a href="https://www.linkedin.com/company/flex-gov/" target="_blank">linkedin ↗</a>
+            </div>
+            <div class="cv-project-meta">2025</div>
+          </div>
+          <div class="cv-project-sub">MSc Machine Learning Project · UWE Bristol · Distinction</div>
+          <div class="cv-achieve">
+            <p><strong>Project Overview: </strong> Can DAO voting vulnerabilities such as whale swings and sybil attacks be mitigated using ML techniques to identify bad actors? </p>
+            <p><strong>Design:</strong> Adaptive governance framework dynamically selecting between voting mechanisms based on participation distribution; Bootstrap-validated Isolation Forest anomaly detection for adversarial actors.</p>
+            <p><strong>Impact:</strong> Applied to real on-chain data from ENS, Gitcoin, and SushiSwap; reduced winner-side Gini coefficient from 0.98 to 0.89.</p>
+          </div>
+        </div>
+
+      </div><!-- /projects -->
+
+      <!-- Work Experience -->
+      <div class="cv-section">
+        <div class="cv-section-label">03</div>
+        <h2 class="cv-section-title">Work Experience</h2>
+
+        <div class="cv-job">
+          <div class="cv-job-header">
+            <div class="cv-job-title">Freelance Marketplace Consultant</div>
+            <div class="cv-job-dates">Oct 2024 – present</div>
+          </div>
+          <div class="cv-job-company">Amplified Brands</div>
+          <div class="cv-achieve">
+            <p><strong>Independent Consulting:</strong> End-to-end account management for multiple consumer brands across UK and EU: listings strategy, advertising, catalogue maintenance, compliance documentation, Brand Registry, and creative asset production.</p>
+          </div>
+        </div>
+
+        <div class="cv-job">
+          <div class="cv-job-header">
+            <div class="cv-job-title">Account Manager — Europe</div>
+            <div class="cv-job-dates">Dec 2022 – Sept 2024</div>
+          </div>
+          <div class="cv-job-company">Nutrabolt (Cellucor / XTEND)</div>
+          <div class="cv-achieve">
+            <p><strong>Commercial Ownership:</strong> P&amp;L responsibility for approximately £5m annual revenue across UK and EU: advertising strategy across multiple formats, promotional planning, pricing decisions, and cross-market forecasting.</p>
+            <p><strong>Data &amp; Systems:</strong> Built internal Excel dashboard consolidating cross-market performance; led full Seller-to-Vendor account migration; A/B testing and competitive analysis for listing optimisation.</p>
+          </div>
+        </div>
+
+        <div class="cv-job">
+          <div class="cv-job-header">
+            <div class="cv-job-title">EU Account Manager</div>
+            <div class="cv-job-dates">June 2022 – Nov 2022</div>
+          </div>
+          <div class="cv-job-company">Philex Electronics (i-box)</div>
+          <div class="cv-achieve">
+            <p><strong>Multi-Market Launch:</strong> End-to-end product launches across UK, DE, FR, IT, ES: content strategy, keyword research, advertising portfolio management, and asset delivery for new product lines.</p>
+          </div>
+        </div>
+
+        <div class="cv-job">
+          <div class="cv-job-header">
+            <div class="cv-job-title">Marketplace Project Manager / Brand Assistant</div>
+            <div class="cv-job-dates">June 2019 – May 2022</div>
+          </div>
+          <div class="cv-job-company">Velocity Commerce</div>
+          <div class="cv-achieve">
+            <p><strong>Systems Design:</strong> Designed and implemented a product catalogue management system in Monday.com that remains in active company-wide use today.</p>
+            <p><strong>Operations:</strong> Simultaneous multi-market catalogue management across 7 territories (UK, USA, DE, FR, IT, ES, NL); account health, compliance documentation, and full content lifecycle management.</p>
+          </div>
+        </div>
+
+        <div class="cv-job">
+          <div class="cv-job-header">
+            <div class="cv-job-title">Freelance Editor &amp; Proofreader</div>
+            <div class="cv-job-dates">2017 – present</div>
+          </div>
+          <div class="cv-job-company">Upwork · copy editing and proofreading for academic and commercial clients</div>
+        </div>
+
+      </div><!-- /work -->
+
+    </div><!-- /cv-main -->
+
+    <!-- Sidebar -->
+    <div class="cv-sidebar">
+
+      <div class="cv-sidebar-section">
+        <div class="cv-sidebar-title">Core Skills</div>
+        <div class="skill-row">
+          <span class="skill-name">Python</span>
+          <div class="skill-dots">
+            <span class="skill-dot on"></span><span class="skill-dot on"></span><span class="skill-dot on"></span>
+            <span class="skill-dot on"></span><span class="skill-dot on"></span><span class="skill-dot on"></span>
+          </div>
+        </div>
+        <div class="skill-row">
+          <span class="skill-name">NLP / Transformers</span>
+          <div class="skill-dots">
+            <span class="skill-dot on"></span><span class="skill-dot on"></span><span class="skill-dot on"></span>
+            <span class="skill-dot on"></span><span class="skill-dot on"></span><span class="skill-dot off"></span>
+          </div>
+        </div>
+        <div class="skill-row">
+          <span class="skill-name">Data Analysis</span>
+          <div class="skill-dots">
+            <span class="skill-dot on"></span><span class="skill-dot on"></span><span class="skill-dot on"></span>
+            <span class="skill-dot on"></span><span class="skill-dot on"></span><span class="skill-dot on"></span>
+          </div>
+        </div>
+        <div class="skill-row">
+          <span class="skill-name">JavaScript</span>
+          <div class="skill-dots">
+            <span class="skill-dot on"></span><span class="skill-dot on"></span><span class="skill-dot on"></span>
+            <span class="skill-dot on"></span><span class="skill-dot off"></span><span class="skill-dot off"></span>
+          </div>
+        </div>
+        <div class="skill-row">
+          <span class="skill-name">SQL</span>
+          <div class="skill-dots">
+            <span class="skill-dot on"></span><span class="skill-dot on"></span><span class="skill-dot on"></span>
+            <span class="skill-dot on"></span><span class="skill-dot off"></span><span class="skill-dot off"></span>
+          </div>
+        </div>
+        <div class="skill-row">
+          <span class="skill-name">R</span>
+          <div class="skill-dots">
+            <span class="skill-dot on"></span><span class="skill-dot on"></span><span class="skill-dot on"></span>
+            <span class="skill-dot off"></span><span class="skill-dot off"></span><span class="skill-dot off"></span>
+          </div>
+        </div>
+        <div class="skill-row">
+          <span class="skill-name">Excel (advanced)</span>
+          <div class="skill-dots">
+            <span class="skill-dot on"></span><span class="skill-dot on"></span><span class="skill-dot on"></span>
+            <span class="skill-dot on"></span><span class="skill-dot on"></span><span class="skill-dot on"></span>
+          </div>
+        </div>
+        <div class="skill-row">
+          <span class="skill-name">Project Management</span>
+          <div class="skill-dots">
+            <span class="skill-dot on"></span><span class="skill-dot on"></span><span class="skill-dot on"></span>
+            <span class="skill-dot on"></span><span class="skill-dot on"></span><span class="skill-dot on"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cv-sidebar-section">
+        <div class="cv-sidebar-title">Technical</div>
+        <div class="skill-group">
+          <div class="skill-group-label">Frameworks</div>
+          <div class="skill-group-value">React, Next.js, spaCy, HuggingFace, scikit-learn, pandas, D3.js</div>
+        </div>
+        <div class="skill-group">
+          <div class="skill-group-label">Infrastructure</div>
+          <div class="skill-group-value">Git/GitHub, Docker, Jupyter, Neo4j, SQLite, FastAPI</div>
+        </div>
+        <div class="skill-group">
+          <div class="skill-group-label">Professional</div>
+          <div class="skill-group-value">Monday.com (advanced), Notion, Asana, stakeholder communication</div>
+        </div>
+      </div>
+
+      <div class="cv-sidebar-section">
+        <div class="cv-sidebar-title">Education</div>
+
+        <div class="sidebar-degree">
+          <div class="sidebar-degree-title">MSc Data Science</div>
+          <div class="sidebar-degree-inst">UWE Bristol · 2024–25</div>
+          <div class="sidebar-degree-detail">Distinction · end-to-end NLP pipeline dissertation</div>
+        </div>
+
+        <div class="sidebar-degree">
+          <div class="sidebar-degree-title">MSc Entrepreneurship, Innovation &amp; Management</div>
+          <div class="sidebar-degree-inst">University of Nottingham · 2015–16</div>
+          <div class="sidebar-degree-detail">Distinction · JISC Summer of Student Innovation Winner 2016</div>
+        </div>
+
+        <div class="sidebar-degree">
+          <div class="sidebar-degree-title">BA Hons English Language &amp; Literature</div>
+          <div class="sidebar-degree-inst">University of Nottingham · 2012–15</div>
+          <div class="sidebar-degree-detail">2:1 · Nottingham Advantage Award</div>
+        </div>
+      </div>
+
+      <div class="cv-sidebar-section">
+        <div class="cv-sidebar-title">Certifications</div>
+        <div class="sidebar-cert"><strong>2026</strong> RAG Systems — Coursera/Packt <em>(in progress)</em></div>
+        <div class="sidebar-cert"><strong>2023</strong> Google Data Analytics Professional Certificate</div>
+        <div class="sidebar-cert"><strong>2020</strong> Introduction to Data Science — University of Michigan</div>
+        <div class="sidebar-cert"><strong>2020</strong> Statistics Foundations 1 &amp; 2; pandas; Python Essential Training — LinkedIn Learning</div>
+      </div>
+
+    </div><!-- /cv-sidebar -->
+
+  </div><!-- /cv-body -->
+
+</div><!-- /cv-wrap -->
+
+<footer>
+  <div class="footer-copy">© 2026 Alice Pateman-Brown · <a href="index.html" style="color:var(--ink3);text-decoration:none;">abrown1564.github.io</a></div>
+</footer>
+
+</body>
+</html>
