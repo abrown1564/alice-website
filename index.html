@@ -392,6 +392,33 @@ a.project-arrow:hover {
   letter-spacing: 0.08em; text-transform: uppercase;
 }
 
+.hero-with-player {
+  display: flex; align-items: center; justify-content: center;
+  gap: 4rem; max-width: 1080px; width: 100%;
+}
+.hero-spotify {
+  flex-shrink: 0; width: 270px; padding-top: 1rem; margin-top: -5rem;
+  display: flex; flex-direction: column; gap: 0.65rem;
+}
+.hero-spotify-label {
+  font-family: var(--mono); font-size: 12px; font-weight: 300;
+  color: var(--ink3); letter-spacing: 0.12em; text-transform: uppercase;
+  display: flex; align-items: center; gap: 0.75rem;
+}
+.soundwave {
+  display: flex; align-items: center; gap: 3px;
+  height: 36px; flex-shrink: 0;
+}
+.soundwave-bar {
+  width: 3px; border-radius: 2px;
+  background: var(--accent); opacity: 0.75;
+  animation: sw-bounce 1s ease-in-out infinite alternate;
+}
+@keyframes sw-bounce {
+  0%   { height: 4px;  opacity: 0.4; }
+  100% { height: 28px; opacity: 0.9; }
+}
+
 /* ── Footer ── */
 footer {
   padding: 1.75rem 3rem;
@@ -420,6 +447,8 @@ footer {
   .nav-links { gap: 1.5rem; }
   .hero { grid-template-columns: 1fr; padding: 8rem 1.5rem 5rem; }
   .hero-graph-panel { display: none; }
+  .hero-with-player { flex-direction: column; align-items: center; }
+  .hero-spotify { width: 100%; max-width: 400px; }
   .feature { padding: 3rem 1.5rem; }
   .feature-card { padding: 2rem 1.5rem; }
   section { padding: 4rem 1.5rem; }
@@ -454,6 +483,7 @@ footer {
 
 <!-- Hero -->
 <div class="hero">
+  <div class="hero-with-player">
   <div class="hero-inner">
     <img src="myceliate.jpg" alt="Myceliate" class="fade-up d1" style="width:160px;height:160px;border-radius:50%;object-fit:cover;margin-bottom:1.75rem;opacity:0.92;box-shadow:0 0 32px rgba(34,211,238,0.2);"/>
     <div class="hero-tag fade-up d1">researcher · creator · bristol, uk</div>
@@ -476,6 +506,25 @@ footer {
       <span class="wotd-def" id="wotd-def"></span>
     </div>
     <div class="hero-scroll fade-up d5" style="margin-top:2rem;">scroll</div>
+  </div>
+  <div class="hero-spotify fade-up d5">
+    <div class="hero-spotify-label">
+      currently on repeat
+      <div class="soundwave" aria-hidden="true">
+        <div class="soundwave-bar" style="animation-delay:0s;    animation-duration:0.85s;"></div>
+        <div class="soundwave-bar" style="animation-delay:0.07s; animation-duration:1.1s;"></div>
+        <div class="soundwave-bar" style="animation-delay:0.14s; animation-duration:0.75s;"></div>
+        <div class="soundwave-bar" style="animation-delay:0.21s; animation-duration:1.0s;"></div>
+        <div class="soundwave-bar" style="animation-delay:0.28s; animation-duration:0.9s;"></div>
+        <div class="soundwave-bar" style="animation-delay:0.05s; animation-duration:1.2s;"></div>
+        <div class="soundwave-bar" style="animation-delay:0.18s; animation-duration:0.8s;"></div>
+        <div class="soundwave-bar" style="animation-delay:0.33s; animation-duration:1.05s;"></div>
+        <div class="soundwave-bar" style="animation-delay:0.11s; animation-duration:0.95s;"></div>
+        <div class="soundwave-bar" style="animation-delay:0.25s; animation-duration:0.7s;"></div>
+      </div>
+    </div>
+    <iframe style="border-radius:6px" src="https://open.spotify.com/embed/playlist/1iFqmwDt8pIKVm5uUUBigC?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+  </div>
   </div>
 </div>
 
