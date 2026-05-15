@@ -14,7 +14,7 @@
   --bg3:    #1c1c19;
   --ink:    #e8e4d9;
   --ink2:   #9a9585;
-  --ink3:   #5a5650;
+  --ink3:   #7a7670;
   --accent: #22d3ee;
   --accent2:#60a5fa;
   --rule:   rgba(232,228,217,0.08);
@@ -59,7 +59,7 @@ nav {
 .nav-links { display: flex; gap: 2.5rem; list-style: none; }
 .nav-links a {
   font-family: var(--mono); font-size: 13px; font-weight: 300;
-  color: var(--ink3); text-decoration: none;
+  color: var(--ink2); text-decoration: none;
   letter-spacing: 0.06em; text-transform: uppercase; transition: color 0.18s;
 }
 .nav-links a:hover { color: var(--ink); }
@@ -101,12 +101,12 @@ nav {
 }
 .hero-tag {
   font-family: var(--mono); font-size: 13px; font-weight: 300;
-  color: var(--ink3); letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink2); letter-spacing: 0.14em; text-transform: uppercase;
   margin-bottom: 2rem;
   display: flex; align-items: center; gap: 0.75rem;
 }
 .hero-tag::before {
-  content: ''; display: block; width: 20px; height: 1px; background: var(--ink3);
+  content: ''; display: block; width: 20px; height: 1px; background: var(--ink2);
 }
 .hero-heading {
   font-family: var(--serif);
@@ -117,7 +117,7 @@ nav {
 }
 .hero-heading em { font-style: italic; color: var(--ink2); }
 .hero-desc {
-  font-size: 1.05rem; font-weight: 300; color: var(--ink2);
+  font-size: 1.1rem; font-weight: 300; color: var(--ink);
   line-height: 1.85; max-width: 580px; margin-bottom: 2.5rem;
 }
 .hero-desc strong { color: var(--ink); font-weight: 400; }
@@ -463,8 +463,8 @@ footer {
     <p class="hero-desc fade-up d3">
       I'm a researcher and builder based in Bristol. I spent a decade in industry before returning to
       university - recently graduating from UWE with an MSc in Data Science. I'm currently developing
-      my PhD proposal while building <strong>Unwrapped</strong>, a startup that grew out of the same
-      research questions. Most recently I built the <strong>Discourse Integrity Map</strong>, a project
+      my PhD proposal while building <a href="https://www.linkedin.com/company/upf-unwrapped/" target="_blank" style="color:var(--ink);font-weight:400;text-decoration:none;border-bottom:1px solid rgba(232,228,217,0.3);">Unwrapped</a>, a startup that grew out of the same
+      research questions. Most recently I built the <a href="https://abrown1564.github.io/dim/report.html" target="_blank" style="color:var(--ink);font-weight:400;text-decoration:none;border-bottom:1px solid rgba(232,228,217,0.3);">Discourse Integrity Map</a>, a project
       I put together to support my application for the CIP fellowship - you can explore that work below.
     </p>
     <div class="hero-cta fade-up d4">
