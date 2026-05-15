@@ -75,6 +75,13 @@ nav {
   position: relative; overflow: hidden;
   text-align: center;
 }
+.hero-bg {
+  position: absolute; inset: -60px; z-index: 0;
+  background: url(myceliate.jpg) center/cover no-repeat;
+  filter: blur(40px) saturate(1.4);
+  opacity: 0.18;
+  transform: scale(1.1);
+}
 .hero-inner {
   position: relative; z-index: 1;
   display: flex; flex-direction: column; align-items: center;
@@ -483,9 +490,10 @@ footer {
 
 <!-- Hero -->
 <div class="hero">
+  <div class="hero-bg"></div>
   <div class="hero-with-player">
   <div class="hero-inner">
-    <img src="myceliate.jpg" alt="Myceliate" class="fade-up d1" style="width:160px;height:160px;border-radius:50%;object-fit:cover;margin-bottom:1.75rem;opacity:0.92;box-shadow:0 0 32px rgba(34,211,238,0.2);"/>
+    <img src="myceliate.jpg" alt="Myceliate" class="fade-up d1" style="width:275px;height:275px;border-radius:50%;object-fit:cover;margin-bottom:1.75rem;opacity:0.92;box-shadow:0 0 48px rgba(34,211,238,0.2);"/>
     <div class="hero-tag fade-up d1">researcher · creator · bristol, uk</div>
     <h1 class="hero-heading fade-up d2">Alice Brown</h1>
     <p class="hero-desc fade-up d3">
