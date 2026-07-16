@@ -619,6 +619,15 @@ footer {
       <div class="project-meta">UWE Bristol · 2025</div>
     </div>
 
+    <div class="project">
+      <a href="advanced-statistics-report.html" class="project-arrow">↗</a>
+      <div class="project-tag tag-research">Research · Statistics · MSc</div>
+      <div class="project-title">Multiclass Classification &amp; Clustering on Biological Data</div>
+      <p class="project-desc">Supervised and unsupervised learning applied to a 3,000-observation, 20-feature biological dataset, comparing Logistic Regression, Random Forest, SVM, and Naïve Bayes across full, PCA-5, and PCA-12 feature strategies, then stress-tested against a stratified bootstrapped simulation. K-means and hierarchical clustering were used to check how much of the class structure survives without labels at all.</p>
+      <div class="project-result">Random Forest · 9.8% error → 0% on bootstrapped data</div>
+      <div class="project-meta">UWE Bristol · MSc Data Science · 2025 · <a href="advanced-statistics-code.html" style="color:var(--ink3);text-decoration:none;border-bottom:1px solid var(--ink3);">R code ↗</a></div>
+    </div>
+
   </div>
 </section>
 
@@ -779,6 +788,13 @@ footer {
         <div class="book-item">
           <div class="book-title"><a href="https://rdcl.is/outlearn/" target="_blank">OUTLEARN</a></div>
           <div class="book-author">Pascal Finette · radical✦</div>
+        </div>
+        <div class="book-item">
+          <a href="https://www.bloomsbury.com/uk/moral-ambition-9781526677532/" target="_blank">
+            <img class="book-cover" src="https://covers.openlibrary.org/b/id/15090157-L.jpg" alt="Moral Ambition"/>
+          </a>
+          <div class="book-title"><a href="https://www.bloomsbury.com/uk/moral-ambition-9781526677532/" target="_blank">Moral Ambition</a></div>
+          <div class="book-author">Rutger Bregman</div>
         </div>
       </div>
     </div>
@@ -950,6 +966,7 @@ const words = [
   { word: 'enshittification',pos: 'n.',      def: "Doctorow's term for the decay of online platforms: first they lure users, then exploit them, then squeeze both." },
   { word: 'coherence collapse',pos: 'n.',    def: 'The point at which a narrative or belief system can no longer absorb its internal contradictions - when meaning fragments rather than coheres.' },
   { word: 'doublethink',     pos: 'n.',      def: "Orwell's term for the trained ability to hold two contradictory beliefs simultaneously and accept both as true." },
+  { word: 'manichean',       pos: 'adj.',    def: 'Of or relating to a dualistic worldview in which existence is divided into absolute good and evil, with no middle ground.' },
 ];
 const w = words[Math.floor(Date.now() / 86400000) % words.length];
 document.getElementById('wotd-word').textContent = w.word;

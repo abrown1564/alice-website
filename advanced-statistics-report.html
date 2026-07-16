@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Multiclass Classification &amp; Clustering &mdash; Alice Brown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:     #0d0d0b;
+  --bg2:    #141412;
+  --ink:    #e8e4d9;
+  --ink2:   #9a9585;
+  --ink3:   #5a5650;
+  --accent: #22d3ee;
+  --accent2:#60a5fa;
+  --rule:   rgba(232,228,217,0.10);
+  --serif:  'Playfair Display', Georgia, serif;
+  --mono:   'DM Mono', monospace;
+  --sans:   'DM Sans', system-ui, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.5rem 3rem; border-bottom: 1px solid var(--rule);
+  position: sticky; top: 0; background: rgba(13,13,11,0.92); backdrop-filter: blur(8px); z-index: 100;
+}
+.nav-name { font-family: var(--serif); font-weight: 700; font-size: 1.1rem; color: var(--ink); text-decoration: none; }
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a { color: var(--ink2); text-decoration: none; font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase; transition: color 0.18s; }
+.nav-links a:hover { color: var(--ink); }
+.main { max-width: 780px; margin: 0 auto; padding: 5rem 1.5rem 6rem; }
+.label { display:flex; align-items:center; gap:10px; color: var(--accent); font-family: var(--mono); font-size: 11.5px; letter-spacing:0.14em; text-transform: uppercase; margin-bottom: 1.5rem; }
+.label .dash { width: 20px; height: 1px; background: var(--accent); display:inline-block; }
+h1.doc-title { font-family: var(--serif); font-weight: 700; font-size: 2.4rem; line-height: 1.15; margin-bottom: 0.75rem; }
+.doc-subtitle { font-family: var(--serif); font-style: italic; color: var(--ink2); font-size: 1.05rem; margin-bottom: 1.75rem; }
+.meta-row { display:flex; flex-wrap:wrap; gap: 0.5rem 1.25rem; font-family: var(--mono); font-size: 12px; color: var(--ink3); letter-spacing: 0.04em; margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 1px solid var(--rule); }
+.meta-row a { color: var(--accent); text-decoration:none; border-bottom: 1px solid rgba(34,211,238,0.35); padding-bottom: 1px; }
+.content h2 { font-family: var(--serif); font-size: 1.5rem; margin: 2.75rem 0 1rem; color: var(--ink); }
+.content h3 { font-family: var(--serif); font-size: 1.2rem; margin: 2.25rem 0 0.85rem; color: var(--ink); }
+.content h4 { font-family: var(--sans); font-size: 0.95rem; font-weight: 500; margin: 1.75rem 0 0.6rem; color: var(--ink2); text-transform: uppercase; letter-spacing: 0.05em; }
+.content p { font-size: 0.95rem; font-weight: 300; color: var(--ink2); margin-bottom: 1.1rem; }
+.content ul { margin: 0 0 1.1rem 1.3rem; }
+.content li { font-size: 0.95rem; font-weight: 300; color: var(--ink2); margin-bottom: 0.4rem; }
+.content strong { color: var(--ink); font-weight: 500; }
+.content em { font-style: italic; }
+code.inline-code { font-family: var(--mono); font-size: 0.85em; background: var(--bg2); border: 1px solid var(--rule); padding: 1px 5px; border-radius: 3px; color: var(--accent); }
+.table-wrap { overflow-x: auto; margin: 1rem 0 0.5rem; }
+table { border-collapse: collapse; width: 100%; font-size: 0.85rem; }
+table th, table td { border: 1px solid var(--rule); padding: 0.5rem 0.7rem; text-align: left; color: var(--ink2); font-weight: 300; }
+table th { color: var(--ink); font-weight: 500; background: var(--bg2); }
+table.perf-table td, table.perf-table th { text-align: center; }
+table.perf-table td:first-child, table.perf-table td:nth-child(2) { text-align: left; color: var(--ink2); background: var(--bg2) !important; }
+table.perf-table th { color: var(--ink); background: var(--bg2); }
+.table-caption { font-size: 0.82rem; color: var(--ink3); font-family: var(--mono); margin-bottom: 1.5rem; }
+figure.report-figure { margin: 1.5rem 0 2rem; }
+figure.report-figure img { width: 100%; height: auto; display: block; background: #fdfdfb; border: 1px solid var(--rule); border-radius: 4px; }
+figure.report-figure figcaption { font-size: 0.82rem; color: var(--ink3); font-family: var(--mono); margin-top: 0.6rem; line-height: 1.5; }
+.back-link { display:inline-block; margin-top: 3rem; color: var(--ink2); text-decoration:none; font-family: var(--mono); font-size: 0.82rem; letter-spacing: 0.04em; }
+.back-link:hover { color: var(--accent); }
+footer { border-top: 1px solid var(--rule); padding: 2rem 3rem; text-align: center; font-family: var(--mono); font-size: 12px; color: var(--ink3); }
+@media (max-width: 700px) {
+  nav { padding: 1.25rem 1.5rem; }
+  .nav-links { gap: 1.25rem; }
+  .main { padding: 3.5rem 1.25rem 4rem; }
+  h1.doc-title { font-size: 1.8rem; }
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-name">alice brown</a>
+  <ul class="nav-links">
+    <li><a href="index.html#work">Work</a></li>
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="writing.html">Writing</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+    <li><a href="map.html">Ideas Map</a></li>
+  </ul>
+</nav>
+
+<main class="main">
+  <div class="label"><span class="dash"></span>Report &middot; MSc Data Science &middot; Advanced Statistics</div>
+  <h1 class="doc-title">Multiclass Classification &amp; Clustering</h1>
+  <p class="doc-subtitle">Supervised and unsupervised learning on a simulated and real biological dataset &mdash; PCA, four classifiers, bootstrapped validation, and clustering.</p>
+  <div class="meta-row">
+    <span>UWE Bristol &middot; 2025</span>
+    <span><a href="advanced-statistics-code.html">View R code &#8599;</a></span>
+    <span><a href="advanced-statistics-classification-clustering.pdf" target="_blank" rel="noopener">Download PDF &#8599;</a></span>
+  </div>
+
+  <div class="content">
+<h2>1. Abstract</h2>
+<p>This report explores supervised and unsupervised learning techniques applied to a labelled biological dataset and a bootstrapped simulated version. Logistic Regression, Random Forest, SVM, and Naïve Bayes were used to predict class labels under three feature strategies: all variables, and PCA-reduced data for 5 and 12 features. Random Forest achieved the best performance overall (9.8% error on original data), and 0% error on the bootstrapped dataset. The simulated data was generated using stratified sampling within class labels, preserving both balance and distributions. Clustering analysis (K-means and hierarchical) revealed moderate alignment with true labels, especially using PCA or handpicked features. These findings underscore the value of dimensionality reduction, robust classifiers, and bootstrap validation in multiclass settings. Overall, the analysis highlights trade-offs between interpretability and accuracy, and demonstrates generalisability across both real and simulated data.</p>
+<h2>2. Introduction</h2>
+<p>This project investigates a multi-class biological dataset using advanced statistical methods, with the aim of assessing class separability, uncovering latent structure, and evaluating robustness through simulation.</p>
+<p>Exploratory Data Analysis (EDA) revealed non-normality, skewed distributions, outliers, and multicollinearity. While some skew was visually apparent, formal skewness testing and outlier detection confirmed distortions that motivated dimensionality reduction across specific features. Logarithmic transformation (log1p()) was applied to highly skewed variables to stabilise variance and reduce distortion in PCA, and data was normalised using scale() to ensure equal feature contribution in distance-based methods. Principal Component Analysis (PCA) was then performed on the scaled data, with component selection guided by scree plots and parallel analysis to ensure optimal variance retention. Varimax rotation was applied post-PCA to improve interpretability of component loadings by maximising loading variance across components. Three main feature strategies were defined: the full feature set, the top 5 PCA components (~49% variance), and the top 12 components (~82%), plus a handpicked set of 7 features that was later only used during unsupervised learning.</p>
+<p>Four supervised classification models - Logistic Regression, Random Forest, Support Vector Machines, and Naïve Bayes - were used to predict class labels under each strategy. Model performance was assessed using misclassification rates and confusion matrices. To evaluate robustness and generalisability, a bootstrapped version of the dataset was generated using stratified sampling. Analyses on this simulated data demonstrated high consistency with the original, reinforcing the reliability of key findings. Additionally, unsupervised learning techniques (K-means and hierarchical clustering) were used to explore latent structure without label information, further validating dimensional separability in both real and simulated data.</p>
+<h2>3. Methods</h2>
+<h3>3.1 Dataset</h3>
+<p>The dataset comprises 3,000 observations across 20 continuous biological features (X1–X20) and one categorical target variable (label: A–D). Class balance was broadly even. Initial exploration revealed 20 missing values, moderate feature skew, outliers, and intercorrelations indicative of underlying latent structure.</p>
+<h3>3.2 Missing Data</h3>
+<p>Less than 0.04% of entries were missing, each affecting only a single column per row. Before selecting an imputation strategy, I first examined the missing data to inform an appropriate handling strategy by checking its potential importance and structural positioning within the dataset. Little’s MCAR test (Little, 1988) was initially attempted to check if the missing values could be MCAR (Missing Completely At Random), but could not be reliably applied due to the highly sparse, unstructured pattern. Instead, I used visual inspection via the <strong>MICE package (Figure 1)</strong> (van Buuren and Groothuis-Oudshoorn, 2011) and <strong>Mahalanobis distance</strong> checks <strong>(Figure 2)</strong> (Mahalanobis, 1936) which suggested the missingness mechanism was likely MCAR or MAR. To further assess whether these incomplete cases could distort the underlying data structure, I used an adaptive <strong>Mahalanobis approach</strong> <strong>(Figure 2)</strong> to estimate distance for incomplete rows using only observed values. A <strong>PCA projection</strong> <strong>(Figure 3)</strong> highlighted these rows against the complete-case distribution, confirming that they were embedded within the main data cloud and not clear outliers. One exception - a case that exhibited a high Mahalanobis distance (~41) - was retained, as its removal risked discarding potentially meaningful biological variation.</p>
+<p>Based on this evidence, deletion was ruled out, despite the small percentage of missing data, because it would have disproportionately reduced class-stratified sample sizes and potentially removed biologically meaningful variation. This aligns with the recommendation from Rubin (1976), who cautioned against deletion in cases where missingness is plausibly MCAR or MAR and when structural data preservation is critical. Instead, label-wise mean imputation was chosen to retain all observations while minimising disruption to class boundaries in supervised models. Each missing value was replaced with the mean of that feature calculated within its respective class.</p>
+<figure class="report-figure"><img src="report-figs/fig01.png" alt="Figure 1: Missingness Pattern in Features (MICE Output)" loading="lazy"/><figcaption>Figure 1. Missingness Pattern in Features (MICE Output)</figcaption></figure>
+<figure class="report-figure"><img src="report-figs/fig02.png" alt="Figure 2: Mahalanobis Distances: Complete vs. Incomplete Cases" loading="lazy"/><figcaption>Figure 2. Mahalanobis Distances: Complete vs. Incomplete Cases</figcaption></figure>
+<figure class="report-figure"><img src="report-figs/fig03.png" alt="Figure 3: PCA Projection of Imputed Data – Missing Rows Highlighted" loading="lazy"/><figcaption>Figure 3. PCA Projection of Imputed Data – Missing Rows Highlighted</figcaption></figure>
+<h3>3.3 Exploratory Data Analysis</h3>
+<figure class="report-figure"><img src="report-figs/fig04.png" alt="Figure 4: Boxplots of Features by Class Label (with Overall Summary – X1–20)" loading="lazy"/><figcaption>Figure 4. Boxplots of Features by Class Label (with Overall Summary – X1–20)</figcaption></figure>
+<figure class="report-figure"><img src="report-figs/fig05.png" alt="Figure 5: Density and Histogram Plots of Features" loading="lazy"/><figcaption>Figure 5. Density and Histogram Plots of Features</figcaption></figure>
+<p><strong>Figure 4</strong> presents boxplots for all 20 numeric features grouped by class, providing an overview of spread, skew, and outlier presence. Variables like X2, X4, X6, X11, and X14 showed long-tailed distributions, suggesting biological heterogeneity and the need for scaling. X8 stood out with extreme skew and over 200 outliers, prompting a log transformation.</p>
+<p>Features such as X3 and X11 showed clear class separation, indicating high predictive value, whereas X5, X15, and X17–X20 showed limited variability or overlap between classes, suggesting low discriminative potential.</p>
+<p>To deepen the analysis, <strong>Figure 5</strong> uses kernel density plots and class-specific histograms. These reveal subtler patterns such as modality, skewness, and label-driven structure not always visible in boxplots. For example, X7’s bimodality resolved into distinct class-based peaks, while X9 showed potential secondary clustering.</p>
+<p>X8 and X10 were heavily right-skewed with dense clusters near zero, reinforcing the need for transformation. In contrast, X17–X20 displayed minimal variation and overlap across all classes, consistent with normalised or derived features. These visual cues guided feature preprocessing and selection for PCA and model input.</p>
+<p>Table 1 summarises the key findings and implications.</p>
+<p><strong>Table 1. Distribution Characteristics and Preprocessing Implications</strong></p>
+<div class="table-wrap"><table>
+<tr><th>Feature</th><th>Shape / Notes</th><th>Skewness</th><th>Implications</th></tr>
+<tr><td><strong>X8</strong></td><td>Strong right-skew, long tail</td><td>1.537</td><td>Definitely consider log transformation</td></tr>
+<tr><td><strong>X11</strong></td><td>Slightly asymmetrical</td><td>0.406</td><td>Slight positive skew</td></tr>
+<tr><td><strong>X10</strong></td><td>Extremely peaked (kurtotic), right-skewed</td><td>0.373</td><td>Could distort models; transformation recommended</td></tr>
+<tr><td><strong>X7</strong></td><td>Bimodal</td><td>0.346</td><td>Very interesting - could suggest latent classes or label structure</td></tr>
+<tr><td><strong>X19</strong></td><td>Light skew</td><td>0.180</td><td>Manageable, especially if scaled</td></tr>
+<tr><td><strong>X17</strong></td><td>Left-skewed</td><td>0.147</td><td>Possibly bounded or clipped; watch for floor effects</td></tr>
+<tr><td><strong>X4</strong></td><td>Slightly right-skewed</td><td>-0.042</td><td>Might consider transformation if needed for sensitivity</td></tr>
+<tr><td><strong>X9</strong></td><td>Bimodal and skewed</td><td>-0.009</td><td>Worth isolating by label – could indicate hidden structure</td></tr>
+</table></div>
+<figure class="report-figure"><img src="report-figs/fig06.png" alt="Figure 6: Correlation matrix highlighting intercorrelated feature blocks (X7–X10 and X17–X20), supporting dimensionality reduction" loading="lazy"/><figcaption>Figure 6. Correlation matrix highlighting intercorrelated feature blocks (X7–X10 and X17–X20), supporting dimensionality reduction</figcaption></figure>
+<p>Prior to dimensionality reduction, a correlation matrix <strong>(Figure 6)</strong> with hierarchical clustering was inspected to identify feature clusters with high intercorrelation. This confirmed correlated blocks, most notably between X7–X10 and X17–X20. This visual inspection was followed by formal multicollinearity analysis using Variance Inflation Factors (VIF). While no VIFs exceeded the conventional threshold of 5, moderate inflation (VIFs of 2–3.6) was observed among X7–X10 and X17–X20, supporting the case for PCA to reduce redundancy and improve generalisation - particularly for linear models.</p>
+<h3>3.4 Principal Component Analysis (PCA)</h3>
+<p>To explore the underlying structure of the data, PCA was applied to the training set only, and the test set was projected into the resulting PCA space to avoid data leakage. A scree plot and parallel analysis <strong>(Figure 7, Figure 8)</strong> were used to determine the optimal number of components to retain. The elbow method identifies the point where adding more components yields diminishing returns in explained variance. Parallel analysis compares eigenvalues from real data to those from randomly generated data, retaining only components that exceed random expectations. Both methods suggested that approximately 4–5 components captured the majority of the variance. The scree plot <strong>(Figure 7 and 8)</strong> revealed a distinct elbow after the fourth component, while parallel analysis supported retention of up to 12 components, capturing ~82% of the total variance. Five components were selected to capture ~48% of the variance for interpretability-focused analysis, while twelve components (~82%) were retained for classifier input to preserve greater variance without excessive dimensionality. The PC1 vs PC2 scatter plot <strong>(Figure 8, right)</strong> shows partial label separation, supporting the presence of underlying structure captured by PCA. Based on this, <strong>five principal components were retained</strong>, consistent with the Kaiser criterion <strong>(eigenvalues &gt; 1)</strong> and visual &#x27;elbow&#x27; method. This decision balances information retention with parsimony and ensures that the retained dimensions reflect meaningful variance in the dataset.</p>
+<figure class="report-figure"><img src="report-figs/fig07.png" alt="Figure 7: Parallel Analysis for PCA" loading="lazy"/><figcaption>Figure 7. Parallel Analysis for PCA</figcaption></figure>
+<figure class="report-figure"><img src="report-figs/fig08.png" alt="Figure 8: PCA Scree Plot (variance explained) and PC1 vs PC2 scatter plot (class separability)" loading="lazy"/><figcaption>Figure 8. PCA Scree Plot (variance explained) and PC1 vs PC2 scatter plot (class separability)</figcaption></figure>
+<p><strong>Varimax-Rotated Component Interpretation</strong></p>
+<p>To aid interpretability, an orthogonal varimax rotation was applied to the 5 retained principal components. This redistributes variance to create a simpler loading structure. Overall variance remains the same, but varimax aligns features more closely with the original features (X1-20) where each feature loads more strongly on just one component - while preserving the overall explained variance. The rotated loadings <strong>(Figure 9)</strong> highlighted clearer latent groupings, with components aligning more distinctly with correlated feature blocks (e.g., X7–X10, X17–X20). Rotation was applied only to the top 5 components to maximise interpretability without compromising the variance-ranked structure. The full set of 12 unrotated components was used for classification tasks to retain the strict variance ordering essential for modelling performance.</p>
+<figure class="report-figure"><img src="report-figs/fig09.png" alt="Figure 9: Heatmap of Varimax-Rotated Loadings" loading="lazy"/><figcaption>Figure 9. Heatmap of Varimax-Rotated Loadings</figcaption></figure>
+<p><strong>Figure 9</strong> shows a heatmap of varimax-rotated PCA loadings (top 5 components), improving interpretability by aligning each component with a distinct set of original features. Rotation highlighted coherent latent groupings - such as a contrast between X17–X20, a tightly correlated X7–X9–X8 cluster, and smaller mixed components - suggesting structured biological variation across the feature set. These interpretations supported the decision to retain five principal components for interpretability-focused analyses, while using all 12 for classification.</p>
+<h3>3.5 Model Preparation and Training</h3>
+<p>Prior to modeling, highly skewed features (X8 &amp; X10) were log-transformed using log1p() to stabilise variance and reduce the influence of outliers, while preserving any zero values. All numeric variables were then standardised using scale() (mean = 0, SD = 1) to ensure fair contribution in distance - and variance-based methods such as PCA and SVM. This preprocessing improved numerical stability and model interpretability. Four classifiers were trained using stratified 80/20 splits:</p>
+<ul><li><strong>Logistic Regression</strong> (multinomial, baseline)</li><li><strong>Random Forest</strong> (ensemble, robust to collinearity &amp; resistant to noise)</li><li><strong>Support Vector Machine</strong> (RBF kernel, non-linear boundaries)</li><li><strong>Naïve Bayes</strong> (probabilistic baseline).</li></ul>
+<p>Each model was evaluated on three feature strategies: full features, PCA (top 5), and PCA (top 12). Performance was assessed via misclassification rate and confusion matrices.</p>
+<p>Given the multicollinearity, outliers, and partial separability observed during EDA and PCA, these four models offer a range of interpretability, complexity, and assumptions, allowing a robust comparison. Random Forest was chosen for its resilience to noise and multicollinearity, while Logistic Regression offers a simple linear baseline. SVM can handle non-linear boundaries, and Naïve Bayes adds a probabilistic perspective.</p>
+<h3>3.6 Bootstrapped Simulation</h3>
+<p>To evaluate model stability and generalisability, stratified bootstrapping was used to generate a simulated dataset that preserved original class proportions and feature distributions by sampling with replacement within class groups. PCA was applied only to the training set to prevent data leakage, and the test set was projected using derived loadings-ensuring a valid evaluation pipeline. Histogram and PCA-cluster comparisons confirmed that the simulated data retained comparable variance and feature structure, with class-wise mean and variance differences remaining below 6.5%. This validated the simulation as a robust testbed for assessing the effects of dimensionality reduction, model complexity, and class structure on classifier performance. All random sampling procedures, including bootstrapping, stratified splitting, and clustering initialisation, were made reproducible using set.seed(123).</p>
+<h3>3.7 Unsupervised Learning</h3>
+<p>To explore latent structure without supervision:</p>
+<p>K-Means Clustering: Elbow method supported k = 4. Clusters were visualised in PCA space and compared against true labels <strong>(Figure 10)</strong>.</p>
+<figure class="report-figure"><img src="report-figs/fig10.png" alt="Figure 10: K-means Clustering on Original vs Simulated Data (PCA Space)" loading="lazy"/><figcaption>Figure 10. K-means Clustering on Original vs Simulated Data (PCA Space)</figcaption></figure>
+<h3>3.8 Hierarchical Clustering</h3>
+<p>Hierarchical Clustering: Ward’s method (specifically ward.D2) was applied to scaled handpicked features to create compact, spherical clusters by minimizing total within-cluster variance. This approach complements the PCA-reduced space and is widely used when Euclidean distances are appropriate due to its tendency to minimise within-cluster variance, producing compact, spherical clusters well-suited to Euclidean distance-based PCA-reduced data. Cluster boundaries were visualised with k = 4 cuts on dendrograms, aligned with the known number of classes, in <strong>Figure 11</strong> below. Cluster-label concordance tables were also produced to examine alignment.</p>
+<figure class="report-figure"><img src="report-figs/fig11.png" alt="Figure 11: Hierarchical Clustering – Original vs Simulated Data (Ward.D2 Method)" loading="lazy"/><figcaption>Figure 11. Hierarchical Clustering – Original vs Simulated Data (Ward.D2 Method)</figcaption></figure>
+<h2>4. Results</h2>
+<h3>4.1 Classification Performance</h3>
+<p>Supervised models were evaluated across three feature strategies: all original features, top 5 PCA components, and top 12 PCA components. Performance was assessed using misclassification error on both original and bootstrapped (simulated) datasets. The results are summarised in <strong>Table 2</strong> below.</p>
+<div class="table-wrap"><table class="perf-table">
+<tr><th>Model</th><th>Features</th><th>Error % (Original)</th><th>Accuracy % (Original)</th><th>Error % (Simulated)</th><th>Accuracy % (Simulated)</th></tr>
+<tr><td><strong>Logistic Regression</strong></td><td>All</td><td style="background:rgb(235,157,20);color:#111;">15</td><td style="background:rgb(235,157,20);color:#111;">85</td><td style="background:rgb(63,194,82);color:#111;">1.8</td><td style="background:rgb(63,194,82);color:#111;">98.2</td></tr>
+<tr><td></td><td>PCA (5)</td><td style="background:rgb(237,111,45);color:#111;">20.2</td><td style="background:rgb(237,111,45);color:#111;">79.8</td><td style="background:rgb(238,85,59);color:#111;">23.1</td><td style="background:rgb(238,85,59);color:#111;">76.9</td></tr>
+<tr><td></td><td>PCA (12)</td><td style="background:rgb(239,68,68);color:#111;">25.5</td><td style="background:rgb(239,68,68);color:#111;">74.5</td><td style="background:rgb(237,104,48);color:#111;">20.9</td><td style="background:rgb(237,104,48);color:#111;">79.1</td></tr>
+<tr><td><strong>Random Forest</strong></td><td>All</td><td style="background:rgb(183,184,30);color:#111;">9.3</td><td style="background:rgb(183,184,30);color:#111;">90.7</td><td style="background:rgb(34,197,94);color:#111;">0</td><td style="background:rgb(34,197,94);color:#111;">100</td></tr>
+<tr><td></td><td>PCA (5)</td><td style="background:rgb(237,121,39);color:#111;">19</td><td style="background:rgb(237,121,39);color:#111;">81</td><td style="background:rgb(188,183,28);color:#111;">9.6</td><td style="background:rgb(188,183,28);color:#111;">90.4</td></tr>
+<tr><td></td><td>PCA (12)</td><td style="background:rgb(237,112,44);color:#111;">20</td><td style="background:rgb(237,112,44);color:#111;">80</td><td style="background:rgb(178,184,32);color:#111;">9</td><td style="background:rgb(178,184,32);color:#111;">91</td></tr>
+<tr><td><strong>SVM</strong></td><td>All</td><td style="background:rgb(223,180,13);color:#111;">11.8</td><td style="background:rgb(223,180,13);color:#111;">88.2</td><td style="background:rgb(42,196,91);color:#111;">0.5</td><td style="background:rgb(42,196,91);color:#111;">99.5</td></tr>
+<tr><td></td><td>PCA (5)</td><td style="background:rgb(235,161,18);color:#111;">14.5</td><td style="background:rgb(235,161,18);color:#111;">85.5</td><td style="background:rgb(236,135,32);color:#111;">17.4</td><td style="background:rgb(236,135,32);color:#111;">82.6</td></tr>
+<tr><td></td><td>PCA (12)</td><td style="background:rgb(50,196,87);color:#111;">1</td><td style="background:rgb(50,196,87);color:#111;">99</td><td style="background:rgb(235,157,20);color:#111;">15</td><td style="background:rgb(235,157,20);color:#111;">85</td></tr>
+<tr><td><strong>Naïve Bayes</strong></td><td>All</td><td style="background:rgb(235,150,24);color:#111;">15.8</td><td style="background:rgb(235,150,24);color:#111;">84.2</td><td style="background:rgb(47,196,88);color:#111;">0.8</td><td style="background:rgb(47,196,88);color:#111;">99.2</td></tr>
+<tr><td></td><td>PCA (5)</td><td style="background:rgb(239,68,68);color:#111;">27.7</td><td style="background:rgb(239,68,68);color:#111;">72.3</td><td style="background:rgb(238,80,61);color:#111;">23.6</td><td style="background:rgb(238,80,61);color:#111;">76.4</td></tr>
+<tr><td></td><td>PCA (12)</td><td style="background:rgb(79,193,75);color:#111;">2.8</td><td style="background:rgb(79,193,75);color:#111;">97.2</td><td style="background:rgb(238,91,56);color:#111;">22.4</td><td style="background:rgb(238,91,56);color:#111;">77.6</td></tr>
+</table></div>
+<p class="table-caption">Table 2: Classification model performance across feature strategies, original vs. bootstrapped-simulated data. Cell shading follows error rate (green = low, red = high).</p>
+<figure class="report-figure"><img src="report-figs/fig12.png" alt="Figure 12: Original vs Simulated Error by Model &amp; Feature Strategy" loading="lazy"/><figcaption>Figure 12. Original vs Simulated Error by Model &amp; Feature Strategy</figcaption></figure>
+<figure class="report-figure"><img src="report-figs/fig13.png" alt="Figure 13: Logistic Regression – Original Data (All 20 Features) and Confusion Matrix" loading="lazy"/><figcaption>Figure 13. Logistic Regression – Original Data (All 20 Features) and Confusion Matrix</figcaption></figure>
+<figure class="report-figure"><img src="report-figs/fig14.png" alt="Figure 14: Random Forest – Original Data (All 20 Features) and Confusion Matrix" loading="lazy"/><figcaption>Figure 14. Random Forest – Original Data (All 20 Features) and Confusion Matrix</figcaption></figure>
+<h3>4.2 Key Findings</h3>
+<h4>Supervised Learning</h4>
+<ul><li><strong>Random Forest</strong>, using all original features, was the most accurate model on real data (9.3% error) and achieved perfect classification (0.0% error) on simulated data.</li><li><strong>SVM</strong> and <strong>Naïve Bayes</strong> significantly improved with PCA, especially using the top 12 principal components, outperforming their full-feature versions.</li><li><strong>PCA improved model performance and stability</strong>, particularly for classifiers assuming linearity (Logistic Regression) or feature independence (Naïve Bayes).</li><li><strong>Logistic Regression</strong>, while interpretable, underperformed across all versions - but showed excellent simulated accuracy using all features (1.8% error), suggesting sensitivity to noise and multicollinearity.</li><li><strong>Performance trends were consistent across original and simulated datasets</strong>, supporting the stability of PCA-based pipelines and the robustness of ensemble methods.</li><li><strong>Handpicked features were deprecated</strong> after being outperformed by PCA strategies in every supervised model - highlighting the value of data-driven reduction over manual selection in the case of supervised learning.</li></ul>
+<h4>Unsupervised Learning</h4>
+<ul><li><strong>PCA-12 enabled the most class-aligned clustering</strong>, with K-means and HC both producing clusters that clearly corresponded to specific labels, especially Class C.</li><li><strong>PCA-5 provided moderate improvements in separability</strong> but less distinct class alignment compared to PCA-12.</li><li><strong>The handpicked feature set no longer outperformed PCA, post a data-leakage issue that was fixed in the PCA pipeline</strong>; its clusters were less distinct post-fix, particularly in the simulated dataset.</li><li><strong>These findings reinforce the value of data-driven dimensionality reduction</strong> in unsupervised contexts, where meaningful latent groupings can emerge more cleanly from well-structured PCA inputs.</li></ul>
+<h2>5. Discussion</h2>
+<p>This analysis assessed the effectiveness and robustness of multiple supervised and unsupervised learning methods across original and bootstrapped datasets. Key insights emerged regarding feature preprocessing, dimensionality reduction, model performance, and generalisability.</p>
+<h3>5.1 Supervised Model Performance</h3>
+<p>Notably, Random Forest achieved perfect classification (0% error) on the simulated data. However, this result should be interpreted with caution. The stratified bootstrapping process preserved original class-conditional distributions with minimal added noise, potentially simplifying the classification task. This suggests excellent internal consistency and model capacity, but does not guarantee real-world generalisability - particularly under unseen or noisier distributions. This reinforces the importance of validating ensemble methods against external datasets with more diverse or noisy characteristics.</p>
+<p>While misclassification rate was used as the primary evaluation metric, ROC analysis provided additional insight into class-level discrimination. Random Forest demonstrated outstanding and consistent performance across all classes, with AUCs between 0.994–0.996. In contrast, Logistic Regression with PCA-12 achieved high AUCs for classes A–C (≈ 0.984), but performance dropped for Class D (AUC = 0.859), indicating weaker discrimination in that class despite reasonable overall accuracy.</p>
+<p>Among all classifiers, Random Forest consistently achieved the lowest error rates, particularly on the original dataset (9.3%) and perfect classification on the simulated dataset (0.0%). Its robustness to multicollinearity and outliers likely contributed to this performance, especially given the highly skewed and heterogeneous feature distributions.</p>
+<p>Support Vector Machines (SVM) also performed well, particularly when using the top 12 PCA components, achieving 1.0% error in the original dataset and 15.0% in the simulated. This suggests that non-linear boundaries captured by the RBF kernel aligned well with structure exposed by PCA - though the model still performed best using all features (11.8% error).</p>
+<p>Naïve Bayes, while relatively weak on the full feature set (15.8% error), benefited substantially from PCA. When trained on the top 12 components, it achieved 2.8% error on the original data and 22.4% on the simulated, supporting the idea that PCA helps satisfy its assumptions of conditional independence.</p>
+<p>Logistic Regression, while interpretable, underperformed relative to the others. It reached 15.0% error with all features, but saw performance degrade on PCA-reduced data (25.5% error with PCA-12 on original data), suggesting limitations when complex class boundaries are projected into lower dimensions.</p>
+<h3>5.2 Dimensionality Strategy Trade-offs</h3>
+<p>PCA proved valuable in reducing dimensionality and multicollinearity while preserving performance in many cases. The top 12 components consistently outperformed the top 5, capturing ~82% of variance and likely retaining more class-relevant signal. However, the best results (e.g., Random Forest) were still obtained using the full feature set, suggesting that PCA introduces modest trade-offs between compression and fidelity.</p>
+<p>The handpicked feature subset was ultimately deprecated. Despite EDA-driven motivation, it introduced subjectivity and was outperformed by PCA in every supervised model. This reinforces the importance of data-driven feature reduction methods in high-dimensional settings.</p>
+<h3>5.3 Generalisability and Simulation Insights</h3>
+<p>Bootstrapping via stratified sampling preserved class balance and distributional structure, allowing for robust testing of model stability. Performance trends on the simulated data mirrored those on the original, affirming the resilience of classification pipelines. Notably, the Random Forest’s 0% error on simulated data implies excellent generalisation when class distributions remain stable-even under resampling.</p>
+<p>Despite this, PCA substantially benefited models such as Naïve Bayes and SVM, where assumptions about independence or smooth decision boundaries are often violated in raw high-dimensional data. PCA not only reduced multicollinearity, but may have helped expose latent structure - making these models more stable and effective.</p>
+<h3>5.4 Unsupervised Learning</h3>
+<p>Both K-means and hierarchical clustering revealed overlapping but interpretable clusters, particularly when using PCA-reduced inputs. The 12-component PCA version led to the most distinct cluster-to-class mappings, with certain clusters showing near-perfect alignment. For example, in KMeans with PCA-12, Cluster 1 aligns almost entirely with Class C, and Cluster 3 (original) aligns predominantly with Class B, especially in the simulated dataset. In Hierarchical Clustering with PCA-12, Cluster 3 strongly captures Class C, while Cluster 1 tends to mix A and D, suggesting partial separation. This improved separability highlights how higher-dimensional PCA retains meaningful latent structure for clustering, improving class alignment over both handpicked and PCA-5 variants. In contrast, the handpicked feature subset, which previously offered slightly better-defined groupings, now shows less clear structure. Clusters span multiple classes with more dispersion, particularly in the simulated version. This suggests that manual feature curation is less effective than data-driven dimensionality reduction for unsupervised discovery, post-cleaning. Interestingly, while PCA-5 still improves cluster interpretability over raw features, it does not isolate distinct classes as cleanly as PCA-12. This supports the idea that retaining more principal components (~82% variance) improves the ability to uncover latent class structure.</p>
+<h3>5.5 Limitations</h3>
+<p>This study has several limitations. First, PCA assumes linearity and may discard non-linear patterns essential for models like Random Forest or SVM. Second, the simulated dataset-while stratified and balanced-may not capture real-world variability or noise, limiting its validity. Third, label-wise mean imputation assumes within-class homogeneity and ignores cross-feature dependencies, which may obscure subtler missingness structures. Finally, clustering via K-means and hierarchical methods relies on geometric assumptions that may misrepresent overlapping or non-convex groupings.</p>
+<h2>6. Conclusion</h2>
+<p>Random Forest using all features consistently delivered the lowest error rates, showing resilience to noise, skew, and collinearity. PCA (12 components) significantly improved generalisability for SVM and Naïve Bayes by reducing multicollinearity and aligning better with model assumptions. Bootstrapped simulation preserved class balance and distributional structure, offering a robust validation setting. Label-wise mean imputation supported interpretability with minimal bias. <strong>Future work</strong> should explore non-linear dimensionality reduction techniques (e.g., Kernel PCA, UMAP), and more advanced imputation strategies to better capture multivariate relationships (e.g., predictive mean matching, missForest). Additional supervised models-such as K-Nearest Neighbours or regularised regressions (Ridge, Lasso)-should be considered to benchmark against SVM and logistic regression. For clustering, density- or graph-based methods (e.g., DBSCAN, spectral clustering) may outperform centroid-based approaches in capturing complex latent structure. Mean Shift Clustering offers a promising alternative, requiring no predefined number of clusters. Cluster evaluation could include formal evaluation using Rand index or similar. Factor Analysis (FA) may outperform PCA in uncovering interpretable latent traits and should be evaluated as a dimensionality reduction technique. Multi-round bootstrapping could be performed to extend to 100+ simulation iterations, creating a distribution of model performance scores and would allow formal CI estimation. The pipeline could also be improved, being converted into modular elements for scalability and ease of use. Finally, external validation could be performed by applying the pipeline to an independent dataset of similar characteristics.</p>
+<h2>7. References</h2>
+<p>Auguie, B., 2017. <em>gridExtra: Functions in Grid graphics.</em> Version 2.3. [software] Available at: https://CRAN.R-project.org/package=gridExtra [Accessed 18 May 2025].</p>
+<p>Henry, L. and Wickham, H., 2020. <em>purrr: Functional programming tools.</em> Version 0.3.4. [software] Available at: https://CRAN.R-project.org/package=purrr [Accessed 21 May 2025].</p>
+<p>Jamshidian, M. and Jalal, S., 2010. Tests of multivariate normality and the detection of outliers. <em>Annual Review of Statistics and Its Application</em>, <em>61</em>(1), pp.1–16. [online] Available at: https://CRAN.R-project.org/package=MissMech [Accessed 8 May 2025].</p>
+<p>Little, R.J.A., 1988. A test of missing completely at random for multivariate data with missing values. <em>Journal of the American Statistical Association</em>, <em>83</em>(404), pp.1198–1202.</p>
+<p>Mahalanobis, P.C., 1936. On the generalised distance in statistics. <em>Proceedings of the National Institute of Sciences of India,</em> <em>2</em>(1), pp.49–55.</p>
+<p>Müller, K. and Wickham, H., 2023. <em>tibble: Simple data frames.</em> Version 3.2.1. [software] Available at: https://CRAN.R-project.org/package=tibble [Accessed 22 May 2025].</p>
+<p>Revelle, W., 2023. <em>psych: Procedures for psychological, psychometric, and personality research.</em> Version 2.3.9. [software] Northwestern University. Available at: https://CRAN.R-project.org/package=psych [Accessed 17 May 2025].</p>
+<p>Robinson, D., 2017. <em>broom: Convert statistical analysis objects into tidy tibbles.</em> Version 0.5.0. [software] Available at: https://CRAN.R-project.org/package=broom [Accessed 19 May 2025].</p>
+<p>Rubin, D.B., 1976. Inference and missing data. <em>Biometrika,</em> 63(3), pp.581–592.</p>
+<p>van Buuren, S. and Groothuis-Oudshoorn, K., 2011. mice: Multivariate imputation by chained equations in R. <em>Journal of Statistical Software,</em> <em>45</em>(3), pp.1–67. [online] Available at: https://www.jstatsoft.org/article/view/v045i03 [Accessed 21 May 2025].</p>
+<p>Wickham, H., 2007. Reshaping data with the reshape package. <em>Journal of Statistical Software,</em> <em>21</em>(12), pp.1–20. [online] Available at: https://www.jstatsoft.org/v21/i12/ [Accessed 20 May 2025].</p>
+  </div>
+
+  <a href="index.html#work" class="back-link">&larr; Back to work &amp; projects</a>
+</main>
+
+<footer>&copy; 2026 Alice Brown. Bristol, UK.</footer>
+</body>
+</html>

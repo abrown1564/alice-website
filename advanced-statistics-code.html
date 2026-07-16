@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>R Code &mdash; Multiclass Classification &amp; Clustering &mdash; Alice Brown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:     #0d0d0b;
+  --bg2:    #141412;
+  --ink:    #e8e4d9;
+  --ink2:   #9a9585;
+  --ink3:   #5a5650;
+  --accent: #22d3ee;
+  --accent2:#60a5fa;
+  --rule:   rgba(232,228,217,0.10);
+  --serif:  'Playfair Display', Georgia, serif;
+  --mono:   'DM Mono', monospace;
+  --sans:   'DM Sans', system-ui, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.5rem 3rem; border-bottom: 1px solid var(--rule);
+  position: sticky; top: 0; background: rgba(13,13,11,0.92); backdrop-filter: blur(8px); z-index: 100;
+}
+.nav-name { font-family: var(--serif); font-weight: 700; font-size: 1.1rem; color: var(--ink); text-decoration: none; }
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a { color: var(--ink2); text-decoration: none; font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase; transition: color 0.18s; }
+.nav-links a:hover { color: var(--ink); }
+.main { max-width: 780px; margin: 0 auto; padding: 5rem 1.5rem 6rem; }
+.label { display:flex; align-items:center; gap:10px; color: var(--accent); font-family: var(--mono); font-size: 11.5px; letter-spacing:0.14em; text-transform: uppercase; margin-bottom: 1.5rem; }
+.label .dash { width: 20px; height: 1px; background: var(--accent); display:inline-block; }
+h1.doc-title { font-family: var(--serif); font-weight: 700; font-size: 2.4rem; line-height: 1.15; margin-bottom: 0.75rem; }
+.doc-subtitle { font-family: var(--serif); font-style: italic; color: var(--ink2); font-size: 1.05rem; margin-bottom: 1.75rem; }
+.meta-row { display:flex; flex-wrap:wrap; gap: 0.5rem 1.25rem; font-family: var(--mono); font-size: 12px; color: var(--ink3); letter-spacing: 0.04em; margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 1px solid var(--rule); }
+.meta-row a { color: var(--accent); text-decoration:none; border-bottom: 1px solid rgba(34,211,238,0.35); padding-bottom: 1px; }
+.content h2 { font-family: var(--serif); font-size: 1.5rem; margin: 2.75rem 0 1rem; color: var(--ink); }
+.content h3 { font-family: var(--serif); font-size: 1.2rem; margin: 2.25rem 0 0.85rem; color: var(--ink); }
+.content h4 { font-family: var(--sans); font-size: 0.95rem; font-weight: 500; margin: 1.75rem 0 0.6rem; color: var(--ink2); text-transform: uppercase; letter-spacing: 0.05em; }
+.content p { font-size: 0.95rem; font-weight: 300; color: var(--ink2); margin-bottom: 1.1rem; }
+.content ul { margin: 0 0 1.1rem 1.3rem; }
+.content li { font-size: 0.95rem; font-weight: 300; color: var(--ink2); margin-bottom: 0.4rem; }
+.content strong { color: var(--ink); font-weight: 500; }
+.content em { font-style: italic; }
+code.inline-code { font-family: var(--mono); font-size: 0.85em; background: var(--bg2); border: 1px solid var(--rule); padding: 1px 5px; border-radius: 3px; color: var(--accent); }
+.table-wrap { overflow-x: auto; margin: 1rem 0 1.5rem; }
+table { border-collapse: collapse; width: 100%; font-size: 0.85rem; }
+table th, table td { border: 1px solid var(--rule); padding: 0.5rem 0.7rem; text-align: left; color: var(--ink2); font-weight: 300; }
+table th { color: var(--ink); font-weight: 500; background: var(--bg2); }
+.code-block {
+  background: var(--bg2); border: 1px solid var(--rule); border-left: 2px solid var(--accent);
+  border-radius: 4px; padding: 1rem 1.25rem; margin: 0 0 1.5rem; overflow-x: auto;
+}
+.code-block code { font-family: var(--mono); font-size: 12.5px; line-height: 1.65; color: var(--ink); white-space: pre; }
+.tok-kw { color: var(--accent2); }
+.tok-str { color: #a8e6a1; }
+.tok-comment { color: var(--ink3); font-style: italic; }
+.tok-fn { color: var(--accent); }
+.tok-op { color: var(--ink2); }
+.section-divider { margin: 4rem 0 2.5rem; padding-top: 2.5rem; border-top: 1px solid var(--rule); }
+.section-divider .label { margin-bottom: 1rem; }
+.section-divider p.file-note { font-size: 0.85rem; color: var(--ink3); font-family: var(--mono); margin-bottom: 1.5rem; }
+.back-link { display:inline-block; margin-top: 3rem; color: var(--ink2); text-decoration:none; font-family: var(--mono); font-size: 0.82rem; letter-spacing: 0.04em; }
+.back-link:hover { color: var(--accent); }
+footer { border-top: 1px solid var(--rule); padding: 2rem 3rem; text-align: center; font-family: var(--mono); font-size: 12px; color: var(--ink3); }
+@media (max-width: 700px) {
+  nav { padding: 1.25rem 1.5rem; }
+  .nav-links { gap: 1.25rem; }
+  .main { padding: 3.5rem 1.25rem 4rem; }
+  h1.doc-title { font-size: 1.8rem; }
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-name">alice brown</a>
+  <ul class="nav-links">
+    <li><a href="index.html#work">Work</a></li>
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="writing.html">Writing</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+    <li><a href="map.html">Ideas Map</a></li>
+  </ul>
+</nav>
+
+<main class="main">
+  <div class="label"><span class="dash"></span>R &middot; Quarto &middot; MSc Data Science</div>
+  <h1 class="doc-title">Multiclass Classification &amp; Clustering</h1>
+  <p class="doc-subtitle">Full annotated R source behind the Advanced Statistics report &mdash; PCA pipeline, four classifiers, bootstrapped simulation, and unsupervised clustering.</p>
+  <div class="meta-row">
+    <span>UWE Bristol &middot; 2025</span>
+    <span><a href="advanced-statistics-report.html">&larr; Back to the report</a></span>
+  </div>
+
+  <div class="content">
+<pre class="code-block"><code><span class="tok-comment"># This chunk sets global knitr options</span>
+knitr::opts_chunk$<span class="tok-fn">set</span>(
+  eval = <span class="tok-kw">TRUE</span>,  <span class="tok-comment"># Run code by default</span>
+  echo = <span class="tok-kw">FALSE</span>,   <span class="tok-comment"># Don&#x27;t show code by default</span>
+  warning = <span class="tok-kw">FALSE</span>,
+  message = <span class="tok-kw">FALSE</span>
+)</code></pre>
+<pre class="code-block"><code>
+<span class="tok-kw">suppressPackageStartupMessages</span>({
+<span class="tok-comment"># Load necessary libraries</span>
+<span class="tok-kw">library</span>(ggplot2)
+<span class="tok-kw">library</span>(readr)
+<span class="tok-kw">library</span>(dplyr)
+<span class="tok-kw">library</span>(MASS)
+<span class="tok-kw">library</span>(tidyverse)
+<span class="tok-kw">library</span>(factoextra)
+<span class="tok-kw">library</span>(tidyr)
+<span class="tok-kw">library</span>(reshape2)
+<span class="tok-kw">library</span>(corrplot)
+<span class="tok-kw">library</span>(mice)
+<span class="tok-kw">library</span>(knitr)
+<span class="tok-kw">library</span>(patchwork)
+<span class="tok-kw">library</span>(psych)
+<span class="tok-kw">library</span>(ggfortify)
+<span class="tok-kw">library</span>(grid)
+<span class="tok-kw">library</span>(gridExtra)
+<span class="tok-kw">library</span>(tibble)
+<span class="tok-kw">library</span>(purrr)
+<span class="tok-kw">library</span>(car)
+<span class="tok-kw">library</span>(e1071)
+<span class="tok-kw">library</span>(nnet)
+<span class="tok-kw">library</span>(randomForest)
+<span class="tok-kw">library</span>(pROC)
+<span class="tok-kw">library</span>(broom)
+
+
+})
+data <span class="tok-op">&lt;-</span> read.csv(<span class="tok-str">&quot;/Users/Ali/Documents/Data Science/24058269_Alice-Pateman-Brown/data/Data.csv&quot;</span>)</code></pre>
+<pre class="code-block"><code>data_missing <span class="tok-op">&lt;-</span> data <span class="tok-op">%&gt;%</span>
+  mutate(row_missing = if_any(starts_with(<span class="tok-str">&quot;X&quot;</span>), is.na), <span class="tok-comment"># add a column called row_missing and return TRUE if any variable in a col starting with X is missing</span>
+         missing_count = rowSums(is.na(across(starts_with(<span class="tok-str">&quot;X&quot;</span>))))) <span class="tok-comment"># add a column called missing_count to sum the missing values in each row</span>
+
+data_outlier_flagged <span class="tok-op">&lt;-</span> data_missing <span class="tok-op">%&gt;%</span>
+  mutate(across(starts_with(<span class="tok-str">&quot;X&quot;</span>), <span class="tok-kw">function</span>(x) scale(x)[,1])) <span class="tok-op">%&gt;%</span> <span class="tok-comment"># standardize using z score</span>
+  mutate(row_outlier = apply(across(starts_with(<span class="tok-str">&quot;X&quot;</span>)), 1, <span class="tok-comment"># create new column row_outlier which shows TRUE if any variable in the row has a z-score above ±3, FALSE otherwise</span>
+                             <span class="tok-kw">function</span>(row) <span class="tok-fn">any</span>(<span class="tok-fn">abs</span>(row) &gt; 3)))
+
+flagged <span class="tok-op">&lt;-</span> data_outlier_flagged <span class="tok-op">%&gt;%</span>
+  filter(row_missing <span class="tok-op">==</span> <span class="tok-kw">TRUE</span> &amp; row_outlier <span class="tok-op">==</span> <span class="tok-kw">TRUE</span>) <span class="tok-comment"># filter to show rows that have both missing values and are also outliers</span></code></pre>
+<pre class="code-block"><code>
+<span class="tok-comment"># Select only complete rows</span>
+complete_rows <span class="tok-op">&lt;-</span> complete.cases(data[, paste0(<span class="tok-str">&quot;X&quot;</span>, 1:20)])
+complete_data <span class="tok-op">&lt;-</span> data[complete_rows, paste0(<span class="tok-str">&quot;X&quot;</span>, 1:20)]
+
+<span class="tok-comment"># Compute mean vector and covariance matrix</span>
+center <span class="tok-op">&lt;-</span> <span class="tok-fn">colMeans</span>(complete_data)
+cov_matrix <span class="tok-op">&lt;-</span> <span class="tok-fn">cov</span>(complete_data)
+
+<span class="tok-comment"># Mahalanobis distance on complete cases (Mahalanobis, 1936)</span>
+mahal_dist_complete <span class="tok-op">&lt;-</span> <span class="tok-fn">mahalanobis</span>(complete_data, center, cov_matrix)
+
+<span class="tok-comment"># Add to original data frame</span>
+data$mahal_complete <span class="tok-op">&lt;-</span> <span class="tok-kw">NA</span>
+data$mahal_complete[complete_rows] <span class="tok-op">&lt;-</span> mahal_dist_complete</code></pre>
+<pre class="code-block"><code><span class="tok-comment"># Create a Mahalanobis function that handles partial data</span>
+adaptive_mahalanobis <span class="tok-op">&lt;-</span> <span class="tok-kw">function</span>(row_index, data_matrix) {
+  row <span class="tok-op">&lt;-</span> data_matrix[row_index, ]
+  missing <span class="tok-op">&lt;-</span> <span class="tok-fn">is.na</span>(row)
+  
+  <span class="tok-comment"># If complete, just return original</span>
+  <span class="tok-kw">if</span> (all(!missing)) <span class="tok-kw">return</span>(<span class="tok-kw">NA</span>)  <span class="tok-comment"># Already handled above</span>
+  
+  <span class="tok-comment"># Get columns with observed values</span>
+  observed_cols <span class="tok-op">&lt;-</span> <span class="tok-fn">which</span>(!missing)
+  observed_row <span class="tok-op">&lt;-</span> row[observed_cols]
+  
+  <span class="tok-comment"># Get complete rows for same observed variables</span>
+  sub_data <span class="tok-op">&lt;-</span> data_matrix[complete.cases(data_matrix[, observed_cols]), observed_cols, drop = <span class="tok-kw">FALSE</span>]
+  
+  <span class="tok-comment"># If too few rows, return NA</span>
+  <span class="tok-kw">if</span> (nrow(sub_data) &lt; 5) <span class="tok-kw">return</span>(<span class="tok-kw">NA</span>)
+  
+  <span class="tok-comment"># Compute mean and covariance</span>
+  center <span class="tok-op">&lt;-</span> <span class="tok-fn">colMeans</span>(sub_data)
+  cov_matrix <span class="tok-op">&lt;-</span> <span class="tok-fn">cov</span>(sub_data)
+  
+  <span class="tok-comment"># Compute Mahalanobis</span>
+  d <span class="tok-op">&lt;-</span> <span class="tok-fn">mahalanobis</span>(<span class="tok-fn">as.numeric</span>(observed_row), center, cov_matrix)
+  <span class="tok-kw">return</span>(d)
+}
+
+<span class="tok-comment"># Apply to incomplete rows only</span>
+data$mahal_partial <span class="tok-op">&lt;-</span> <span class="tok-kw">NA</span>
+incomplete_rows <span class="tok-op">&lt;-</span> <span class="tok-fn">which</span>(!complete_rows)
+
+<span class="tok-kw">for</span> (i <span class="tok-kw">in</span> incomplete_rows) {
+  data$mahal_partial[i] <span class="tok-op">&lt;-</span> adaptive_mahalanobis(i, data[, paste0(<span class="tok-str">&quot;X&quot;</span>, 1:20)])
+}</code></pre>
+<pre class="code-block"><code>
+<span class="tok-comment"># r impute with category mean</span>
+
+<span class="tok-comment"># Final imputation: Replace missing values using the mean of each feature within its label group</span>
+<span class="tok-comment"># This preserves class-specific structure while minimizing bias from rare observations</span>
+data_imputed <span class="tok-op">&lt;-</span> data <span class="tok-op">%&gt;%</span>
+  group_by(label) <span class="tok-op">%&gt;%</span>
+  mutate(across(starts_with(<span class="tok-str">&quot;X&quot;</span>),
+                ~ ifelse(is.na(.), mean(., na.rm = <span class="tok-kw">TRUE</span>), .))) <span class="tok-op">%&gt;%</span>
+  <span class="tok-fn">ungroup</span>()
+
+
+
+data_imputed <span class="tok-op">&lt;-</span> data_imputed <span class="tok-op">%&gt;%</span>
+  <span class="tok-fn">mutate</span>(X8 = <span class="tok-fn">log1p</span>(X8), X10 = <span class="tok-fn">log1p</span>(X10))</code></pre>
+<pre class="code-block"><code>data_cleaned <span class="tok-op">&lt;-</span> data_imputed <span class="tok-op">%&gt;%</span>
+  dplyr::select(-starts_with(<span class="tok-str">&quot;mahal&quot;</span>)) <span class="tok-op">%&gt;%</span>
+  <span class="tok-fn">mutate</span>(label = <span class="tok-fn">as.factor</span>(label))</code></pre>
+<h2>1. Abstract</h2>
+<p>This report explores supervised and unsupervised learning techniques applied to a labelled biological dataset and a bootstrapped simulated version. Logistic Regression, Random Forest, SVM, and Naïve Bayes were used to predict class labels under three feature strategies: all variables, and PCA-reduced data for 5 and 12 features. Random Forest achieved the best performance overall (9.8% error on original data), and 0% error on the bootstrapped dataset. The simulated data was generated using stratified sampling within class labels, preserving both balance and distributions. Clustering analysis (K-means and hierarchical) revealed moderate alignment with true labels, especially using PCA or handpicked features. These findings underscore the value of dimensionality reduction, robust classifiers, and bootstrap validation in multiclass settings. Overall, the analysis highlights trade-offs between interpretability and accuracy, and demonstrates generalisability across both real and simulated data.</p>
+<h2>2. Introduction</h2>
+<p>This project investigates a multi-class biological dataset using advanced statistical methods, with the aim of assessing class separability, uncovering latent structure, and evaluating robustness through simulation.</p>
+<p>Exploratory Data Analysis (EDA) revealed non-normality, skewed distributions, outliers, and multicollinearity. While some skew was visually apparent, formal skewness testing and outlier detection confirmed distortions that motivated dimensionality reduction across specific features. Logarithmic transformation (log1p()) was applied to highly skewed variables to stabilise variance and reduce distortion in PCA, and data was normalised using scale() to ensure equal feature contribution in distance-based methods. Principal Component Analysis (PCA) was then performed on the scaled data, with component selection guided by scree plots and parallel analysis to ensure optimal variance retention. Varimax rotation was applied post-PCA to improve interpretability of component loadings by maximising loading variance across components. Three main feature strategies were defined: the full feature set, the top 5 PCA components (~49% variance), and the top 12 components (~82%), plus a handpicked set of 7 features that was later only used during unsupervised learning.</p>
+<p>Four supervised classification models - Logistic Regression, Random Forest, Support Vector Machines, and Naïve Bayes - were used to predict class labels under each strategy. Model performance was assessed using misclassification rates and confusion matrices. To evaluate robustness and generalisability, a bootstrapped version of the dataset was generated using stratified sampling. Analyses on this simulated data demonstrated high consistency with the original, reinforcing the reliability of key findings. Additionally, unsupervised learning techniques (K-means and hierarchical clustering) were used to explore latent structure without label information, further validating dimensional separability in both real and simulated data.</p>
+<h2>3. Methods</h2>
+<h3>3.1 Dataset</h3>
+<p>The dataset comprises 3,000 observations across 20 continuous biological features (X1–X20) and one categorical target variable (label: A–D). Class balance was broadly even. Initial exploration revealed 20 missing values, moderate feature skew, outliers, and intercorrelations indicative of underlying latent structure.</p>
+<h3>3.2 Missing Data</h3>
+<p>Less than 0.04% of entries were missing, each affecting only a single column per row. Before selecting an imputation strategy, I first examined the missing data to inform an appropriate handling strategy by checking its potential importance and structural positioning within the dataset. Little’s MCAR test (Little, 1988) was initially attempted to check if the missing values could be MCAR (Missing Completely At Random), but could not be reliably applied due to the highly sparse, unstructured pattern. Instead, I used visual inspection via the <strong>MICE package (Figure 1)</strong> (van Buuren and Groothuis-Oudshoorn, 2011) and <strong>Mahalanobis distance</strong> checks <strong>(Figure 2)</strong> (Mahalanobis, 1936) which suggested the missingness mechanism was likely MCAR or MAR. To further assess whether these incomplete cases could distort the underlying data structure, I used an adaptive <strong>Mahalanobis approach</strong> <strong>(Figure 2)</strong> to estimate distance for incomplete rows using only observed values. A <strong>PCA projection</strong> <strong>(Figure 3)</strong> highlighted these rows against the complete-case distribution, confirming that they were embedded within the main data cloud and not clear outliers. One exception - a case that exhibited a high Mahalanobis distance (~41) - was retained, as its removal risked discarding potentially meaningful biological variation.</p>
+<p>Based on this evidence, deletion was ruled out, despite the small percentage of missing data, because it would have disproportionately reduced class-stratified sample sizes and potentially removed biologically meaningful variation. This aligns with the recommendation from Rubin (1976), who cautioned against deletion in cases where missingness is plausibly MCAR or MAR and when structural data preservation is critical. Instead, label-wise mean imputation was chosen to retain all observations while minimising disruption to class boundaries in supervised models. Each missing value was replaced with the mean of that feature calculated within its respective class.</p>
+<pre class="code-block"><code>
+<span class="tok-comment"># Save current graphical parameters</span>
+old_par <span class="tok-op">&lt;-</span> par(no.readonly = <span class="tok-kw">TRUE</span>)
+
+<span class="tok-comment"># Reduce text size for better layout scaling</span>
+<span class="tok-fn">par</span>(cex = 0.6)
+
+<span class="tok-comment"># Plot missing data pattern using mice</span>
+pattern <span class="tok-op">&lt;-</span> <span class="tok-fn">md.pattern</span>(data[, 1:20])
+
+<span class="tok-comment"># Restore original graphical settings</span>
+<span class="tok-fn">par</span>(old_par)
+
+<span class="tok-comment"># Convert matrix to data frame for optional inspection or printing</span>
+pattern_df <span class="tok-op">&lt;-</span> <span class="tok-fn">as.data.frame</span>(pattern)</code></pre>
+<pre class="code-block"><code>
+p1 <span class="tok-op">&lt;-</span> <span class="tok-fn">ggplot</span>(data, <span class="tok-fn">aes</span>(x = mahal_complete )) + 
+  geom_histogram(binwidth = 1, fill = <span class="tok-str">&quot;skyblue&quot;</span>, na.rm = <span class="tok-kw">TRUE</span>) +
+  geom_vline(xintercept = 30, color = <span class="tok-str">&quot;red&quot;</span>, linetype = <span class="tok-str">&quot;dashed&quot;</span>) +
+  labs(title = <span class="tok-str">&quot;Mahalanobis Distances (Complete Cases)&quot;</span>, x = <span class="tok-str">&quot;Distance&quot;</span>, y = <span class="tok-str">&quot;Count&quot;</span>) +
+  <span class="tok-fn">theme_minimal</span>() +
+  <span class="tok-fn">theme</span>(plot.title = <span class="tok-fn">element_text</span>(size = 10), axis.title = <span class="tok-fn">element_text</span>(size = 8))
+
+p2 <span class="tok-op">&lt;-</span> <span class="tok-fn">ggplot</span>(data, <span class="tok-fn">aes</span>(x = mahal_partial)) + 
+  geom_histogram(binwidth = 1, fill = <span class="tok-str">&quot;salmon&quot;</span>, na.rm = <span class="tok-kw">TRUE</span>) +
+  geom_vline(xintercept = 30, color = <span class="tok-str">&quot;red&quot;</span>, linetype = <span class="tok-str">&quot;dashed&quot;</span>) +
+  labs(title = <span class="tok-str">&quot;Adaptive Mahalanobis (Incomplete Rows)&quot;</span>, x = <span class="tok-str">&quot;Distance&quot;</span>, y = <span class="tok-str">&quot;Count&quot;</span>) +
+  <span class="tok-fn">theme_minimal</span>() +
+  <span class="tok-fn">theme</span>(plot.title = <span class="tok-fn">element_text</span>(size = 10), axis.title = <span class="tok-fn">element_text</span>(size = 8))
+
+p1 + p2 + <span class="tok-fn">plot_layout</span>(ncol = 2)</code></pre>
+<pre class="code-block"><code>
+<span class="tok-comment"># Step 1: Identify rows with missing values</span>
+data_missing <span class="tok-op">&lt;-</span> data <span class="tok-op">%&gt;%</span>
+  mutate(row_missing = if_any(starts_with(<span class="tok-str">&quot;X&quot;</span>), is.na))
+
+<span class="tok-comment"># Step 2: Impute missing values with column means (simple, diagnostic purpose only)</span>
+data_column_mean_imputed <span class="tok-op">&lt;-</span> data <span class="tok-op">%&gt;%</span>
+  mutate(across(starts_with(<span class="tok-str">&quot;X&quot;</span>),
+                ~ ifelse(is.na(.), mean(., na.rm = <span class="tok-kw">TRUE</span>), .)))
+
+<span class="tok-comment"># Step 3: Run PCA on imputed data</span>
+features <span class="tok-op">&lt;-</span> data_column_mean_imputed <span class="tok-op">%&gt;%</span>
+  dplyr::select(starts_with(<span class="tok-str">&quot;X&quot;</span>))
+pca_result <span class="tok-op">&lt;-</span> prcomp(features, center = <span class="tok-kw">TRUE</span>, scale. = <span class="tok-kw">TRUE</span>)
+
+<span class="tok-comment"># Step 4: Create vector to highlight missing rows</span>
+missing_indices <span class="tok-op">&lt;-</span> <span class="tok-fn">which</span>(data_missing$row_missing)
+
+<span class="tok-comment"># Step 5: Visualize PCA with missing rows highlighted</span>
+<span class="tok-comment"># Enlarged plot + stronger highlighting for missing rows</span>
+
+col_vector <span class="tok-op">&lt;-</span> <span class="tok-fn">factor</span>(
+  ifelse(1:nrow(data) %<span class="tok-kw">in</span>% missing_indices, <span class="tok-str">&quot;Missing&quot;</span>, <span class="tok-str">&quot;Complete&quot;</span>), levels = c(<span class="tok-str">&quot;Complete&quot;</span>, <span class="tok-str">&quot;Missing&quot;</span>)
+)
+
+<span class="tok-fn">fviz_pca_ind</span>(
+  pca_result,
+  geom.ind = <span class="tok-str">&quot;point&quot;</span>,
+  col.ind = col_vector,
+  pointsize = ifelse(1:nrow(data) %<span class="tok-kw">in</span>% missing_indices, 3, 1.5),
+  title = <span class="tok-kw">NULL</span>
+) +
+  scale_color_manual(values = c(<span class="tok-str">&quot;Complete&quot;</span> = <span class="tok-str">&quot;grey&quot;</span>, <span class="tok-str">&quot;Missing&quot;</span> = <span class="tok-str">&quot;red&quot;</span>)) +
+  guides(size = <span class="tok-kw">FALSE</span>, shape = <span class="tok-kw">FALSE</span>) +
+  labs(colour = <span class="tok-str">&quot;Row Type&quot;</span>)</code></pre>
+<h3>3.3 Exploratory Data Analysis</h3>
+<pre class="code-block"><code><span class="tok-kw">library</span>(dplyr)
+<span class="tok-kw">library</span>(tidyr)
+<span class="tok-kw">library</span>(ggplot2)
+
+<span class="tok-comment"># Make sure you&#x27;re using dplyr::select</span>
+summary_data <span class="tok-op">&lt;-</span> data_cleaned <span class="tok-op">%&gt;%</span>
+  dplyr::select(all_of(paste0(<span class="tok-str">&quot;X&quot;</span>, 1:20))) <span class="tok-op">%&gt;%</span>
+  pivot_longer(cols = everything(), names_to = <span class="tok-str">&quot;Feature&quot;</span>, values_to = <span class="tok-str">&quot;Value&quot;</span>) <span class="tok-op">%&gt;%</span>
+  mutate(label = <span class="tok-str">&quot;All&quot;</span>)
+
+long_data <span class="tok-op">&lt;-</span> data_cleaned <span class="tok-op">%&gt;%</span>
+  pivot_longer(cols = starts_with(<span class="tok-str">&quot;X&quot;</span>), names_to = <span class="tok-str">&quot;Feature&quot;</span>, values_to = <span class="tok-str">&quot;Value&quot;</span>)
+
+<span class="tok-comment"># Combine and set factor levels</span>
+combined_data <span class="tok-op">&lt;-</span> bind_rows(summary_data, long_data) <span class="tok-op">%&gt;%</span>
+  <span class="tok-fn">mutate</span>(
+    label = factor(label, levels = c(<span class="tok-str">&quot;All&quot;</span>, <span class="tok-str">&quot;A&quot;</span>, <span class="tok-str">&quot;B&quot;</span>, <span class="tok-str">&quot;C&quot;</span>, <span class="tok-str">&quot;D&quot;</span>)),
+    Feature = factor(Feature, levels = paste0(<span class="tok-str">&quot;X&quot;</span>, 1:20))
+  )
+
+<span class="tok-comment"># Plot</span>
+<span class="tok-fn">ggplot</span>(combined_data, <span class="tok-fn">aes</span>(x = label, y = Value, fill = label)) +
+  <span class="tok-fn">geom_boxplot</span>(outlier.size = 0.4, alpha = 0.7) +
+  facet_wrap(~Feature, scales = <span class="tok-str">&quot;free_y&quot;</span>, ncol = 5) +
+  <span class="tok-fn">scale_fill_manual</span>(
+    values = c(<span class="tok-str">&quot;All&quot;</span> = <span class="tok-str">&quot;grey70&quot;</span>, <span class="tok-str">&quot;A&quot;</span> = &quot;<span class="tok-comment">#F8766D&quot;, &quot;B&quot; = &quot;#7CAE00&quot;, &quot;C&quot; = &quot;#00BFC4&quot;, &quot;D&quot; = &quot;#C77CFF&quot;),</span>
+    name = <span class="tok-str">&quot;Class Label&quot;</span>
+  ) +
+  <span class="tok-fn">labs</span>(
+    x = <span class="tok-str">&quot;Label&quot;</span>, y = <span class="tok-str">&quot;Value&quot;</span>
+  ) +
+  <span class="tok-fn">theme_minimal</span>(base_size = 18) +
+  <span class="tok-fn">theme</span>(
+    strip.text = <span class="tok-fn">element_text</span>(size = 20),
+    axis.title = <span class="tok-fn">element_text</span>(size = 20),
+    axis.text.x = element_text(size = 18, face = <span class="tok-str">&quot;bold&quot;</span>),
+    axis.text.y = element_text(size = 18, face = <span class="tok-str">&quot;bold&quot;</span>),
+    legend.title = <span class="tok-fn">element_text</span>(size = 18),
+    legend.text = <span class="tok-fn">element_text</span>(size = 18),
+    legend.position = <span class="tok-str">&quot;right&quot;</span>,
+    legend.key.size = unit(1.8, <span class="tok-str">&quot;cm&quot;</span>),
+    plot.title = element_text(size = 24, face = <span class="tok-str">&quot;bold&quot;</span>),
+    <span class="tok-fn">theme</span>(strip.text = <span class="tok-fn">element_text</span>(size = 20))
+  )</code></pre>
+<pre class="code-block"><code><span class="tok-kw">suppressPackageStartupMessages</span>({
+  <span class="tok-kw">library</span>(ggplot2)
+  <span class="tok-kw">library</span>(reshape2)
+  <span class="tok-kw">library</span>(dplyr)
+  <span class="tok-kw">library</span>(tidyr)
+  <span class="tok-kw">library</span>(patchwork)
+})
+
+numeric_data <span class="tok-op">&lt;-</span> data_cleaned[<span class="tok-fn">sapply</span>(data_cleaned, is.numeric)]
+data_long_density <span class="tok-op">&lt;-</span> <span class="tok-fn">melt</span>(numeric_data)
+
+p1 <span class="tok-op">&lt;-</span> <span class="tok-fn">ggplot</span>(data_long_density, <span class="tok-fn">aes</span>(x = value)) +
+  geom_density(fill = <span class="tok-str">&quot;skyblue&quot;</span>, alpha = 0.6) +
+  facet_wrap(~variable, scales = <span class="tok-str">&quot;free&quot;</span>) +
+  labs(title = <span class="tok-str">&quot;Feature Distributions (Density)&quot;</span>, x = <span class="tok-str">&quot;Value&quot;</span>, y = <span class="tok-str">&quot;Density&quot;</span>) +
+  <span class="tok-fn">theme_minimal</span>() +
+  <span class="tok-fn">theme</span>(strip.text = <span class="tok-fn">element_text</span>(size = 8))
+
+data_long_hist <span class="tok-op">&lt;-</span> data <span class="tok-op">%&gt;%</span>
+  pivot_longer(cols = starts_with(<span class="tok-str">&quot;X&quot;</span>),
+               names_to = <span class="tok-str">&quot;Variable&quot;</span>,
+               values_to = <span class="tok-str">&quot;Value&quot;</span>) <span class="tok-op">%&gt;%</span>
+  filter(!is.na(Value)) <span class="tok-op">%&gt;%</span>
+  mutate(Variable = factor(Variable, levels = paste0(<span class="tok-str">&quot;X&quot;</span>, 1:20)))
+
+p2 <span class="tok-op">&lt;-</span> <span class="tok-fn">ggplot</span>(data_long_hist, <span class="tok-fn">aes</span>(x = Value, fill = label)) +
+  geom_histogram(position = <span class="tok-str">&quot;identity&quot;</span>, alpha = 0.5, bins = 30) +
+  facet_wrap(~Variable, scales = <span class="tok-str">&quot;free&quot;</span>, ncol = 4) +
+  labs(title = <span class="tok-str">&quot;Histogram of Features by Label&quot;</span>, x = <span class="tok-str">&quot;Value&quot;</span>, y = <span class="tok-str">&quot;Count&quot;</span>) +
+  <span class="tok-fn">theme_minimal</span>() +
+  theme(strip.text = element_text(size = 8), legend.position = <span class="tok-str">&quot;bottom&quot;</span>)
+
+p1 + p2 + <span class="tok-fn">plot_layout</span>(ncol = 2, widths = <span class="tok-fn">c</span>(1, 1))</code></pre>
+<p><strong>Figure 4</strong> presents boxplots for all 20 numeric features grouped by class, providing an overview of spread, skew, and outlier presence. Variables like X2, X4, X6, X11, and X14 showed long-tailed distributions, suggesting biological heterogeneity and the need for scaling. X8 stood out with extreme skew and over 200 outliers, prompting a log transformation.</p>
+<p>Features such as X3 and X11 showed clear class separation, indicating high predictive value, whereas X5, X15, and X17–X20 showed limited variability or overlap between classes, suggesting low discriminative potential.</p>
+<p>To deepen the analysis, <strong>Figure 5</strong> uses kernel density plots and class-specific histograms. These reveal subtler patterns such as modality, skewness, and label-driven structure not always visible in boxplots. For example, X7’s bimodality resolved into distinct class-based peaks, while X9 showed potential secondary clustering.</p>
+<p>X8 and X10 were heavily right-skewed with dense clusters near zero, reinforcing the need for transformation. In contrast, X17–X20 displayed minimal variation and overlap across all classes, consistent with normalised or derived features. These visual cues guided feature preprocessing and selection for PCA and model input.</p>
+<p>Table 1 summarises the key findings and implications.</p>
+<p><strong>Table 1. Distribution Characteristics and Preprocessing Implications</strong></p>
+<div class="table-wrap"><table>
+<tr><th>Feature</th><th>Shape / Notes</th><th>Skewness</th><th>Implications</th></tr>
+<tr><td><strong>X8</strong></td><td>Strong right-skew, long tail</td><td>1.537</td><td>Definitely consider log transformation</td></tr>
+<tr><td><strong>X11</strong></td><td>Slightly asymmetrical</td><td>0.406</td><td>Slight positive skew</td></tr>
+<tr><td><strong>X10</strong></td><td>Extremely peaked (kurtotic), right-skewed</td><td>0.373</td><td>Could distort models; transformation recommended</td></tr>
+<tr><td><strong>X7</strong></td><td>Bimodal</td><td>0.346</td><td>Very interesting - could suggest latent classes or label structure</td></tr>
+<tr><td><strong>X19</strong></td><td>Light skew</td><td>0.180</td><td>Manageable, especially if scaled</td></tr>
+<tr><td><strong>X17</strong></td><td>Left-skewed</td><td>0.147</td><td>Possibly bounded or clipped; watch for floor effects</td></tr>
+<tr><td><strong>X4</strong></td><td>Slightly right-skewed</td><td>-0.042</td><td>Might consider transformation if needed for sensitivity</td></tr>
+<tr><td><strong>X9</strong></td><td>Bimodal and skewed</td><td>-0.009</td><td>Worth isolating by label – could indicate hidden structure</td></tr>
+</table></div>
+<pre class="code-block"><code><span class="tok-comment"># Load required library</span>
+<span class="tok-kw">library</span>(pheatmap)
+
+<span class="tok-comment"># Select numeric features only (X1 to X20)</span>
+numeric_data <span class="tok-op">&lt;-</span> data_cleaned <span class="tok-op">%&gt;%</span>
+  dplyr::select(starts_with(<span class="tok-str">&quot;X&quot;</span>))
+
+<span class="tok-comment"># Compute correlation matrix</span>
+cor_matrix <span class="tok-op">&lt;-</span> <span class="tok-fn">cor</span>(numeric_data)
+
+<span class="tok-comment"># Create the heatmap</span>
+<span class="tok-fn">pheatmap</span>(cor_matrix,
+         display_numbers = <span class="tok-kw">FALSE</span>,
+         color = colorRampPalette(c(<span class="tok-str">&quot;blue&quot;</span>, <span class="tok-str">&quot;white&quot;</span>, <span class="tok-str">&quot;red&quot;</span>))(100),
+         fontsize = 10,
+         fontsize_row = 8,
+         fontsize_col = 8,
+         border_color = <span class="tok-kw">NA</span>)</code></pre>
+<p>Prior to dimensionality reduction, a correlation matrix <strong>(Figure 6)</strong> with hierarchical clustering was inspected to identify feature clusters with high intercorrelation. This confirmed correlated blocks, most notably between X7–X10 and X17–X20. This visual inspection was followed by formal multicollinearity analysis using Variance Inflation Factors (VIF). While no VIFs exceeded the conventional threshold of 5, moderate inflation (VIFs of 2–3.6) was observed among X7–X10 and X17–X20, supporting the case for PCA to reduce redundancy and improve generalisation - particularly for linear models.</p>
+<h3>3.4 Principal Component Analysis (PCA)</h3>
+<p>To explore the underlying structure of the data, PCA was applied to the training set only, and the test set was projected into the resulting PCA space to avoid data leakage. A scree plot and parallel analysis <strong>(Figure 7, Figure 8)</strong> were used to determine the optimal number of components to retain. The elbow method identifies the point where adding more components yields diminishing returns in explained variance. Parallel analysis compares eigenvalues from real data to those from randomly generated data, retaining only components that exceed random expectations. Both methods suggested that approximately 4–5 components captured the majority of the variance. The scree plot <strong>(Figure 7 and 8)</strong> revealed a distinct elbow after the fourth component, while parallel analysis supported retention of up to 12 components, capturing ~82% of the total variance. Five components were selected to capture ~48% of the variance for interpretability-focused analysis, while twelve components (~82%) were retained for classifier input to preserve greater variance without excessive dimensionality. The PC1 vs PC2 scatter plot <strong>(Figure 8, right)</strong> shows partial label separation, supporting the presence of underlying structure captured by PCA. Based on this, <strong>five principal components were retained</strong>, consistent with the Kaiser criterion <strong>(eigenvalues &gt; 1)</strong> and visual &#x27;elbow&#x27; method. This decision balances information retention with parsimony and ensures that the retained dimensions reflect meaningful variance in the dataset.</p>
+<pre class="code-block"><code><span class="tok-comment"># === LOG-TRANSFORM &amp; ROW ID BEFORE SPLIT ===</span>
+data_imputed <span class="tok-op">&lt;-</span> data_imputed <span class="tok-op">%&gt;%</span>
+  <span class="tok-fn">mutate</span>(X8 = <span class="tok-fn">log1p</span>(X8), X10 = <span class="tok-fn">log1p</span>(X10),
+         row_id = <span class="tok-fn">row_number</span>())
+
+<span class="tok-comment"># === TRAIN/TEST SPLIT ===</span>
+<span class="tok-fn">set.seed</span>(123)
+train_index <span class="tok-op">&lt;-</span> <span class="tok-fn">sample</span>(1:<span class="tok-fn">nrow</span>(data_imputed), 0.8 * <span class="tok-fn">nrow</span>(data_imputed))
+train_data <span class="tok-op">&lt;-</span> data_imputed[train_index, ]
+test_data  <span class="tok-op">&lt;-</span> data_imputed[-train_index, ]
+
+<span class="tok-comment"># === FEATURE EXTRACTION ===</span>
+train_features <span class="tok-op">&lt;-</span> train_data <span class="tok-op">%&gt;%</span> dplyr::select(starts_with(<span class="tok-str">&quot;X&quot;</span>))
+test_features  <span class="tok-op">&lt;-</span> test_data  <span class="tok-op">%&gt;%</span> dplyr::select(starts_with(<span class="tok-str">&quot;X&quot;</span>))
+
+<span class="tok-comment"># === SCALE USING TRAIN STATS ===</span>
+train_scaled <span class="tok-op">&lt;-</span> <span class="tok-fn">scale</span>(train_features)
+train_center <span class="tok-op">&lt;-</span> attr(train_scaled, <span class="tok-str">&quot;scaled:center&quot;</span>)
+train_scale  <span class="tok-op">&lt;-</span> attr(train_scaled, <span class="tok-str">&quot;scaled:scale&quot;</span>)
+
+test_scaled <span class="tok-op">&lt;-</span> <span class="tok-fn">scale</span>(test_features, center = train_center, scale = train_scale)
+
+<span class="tok-comment"># === PCA on TRAIN ONLY ===</span>
+pca_result <span class="tok-op">&lt;-</span> <span class="tok-fn">prcomp</span>(train_scaled)</code></pre>
+<pre class="code-block"><code><span class="tok-comment"># === PARALLEL ANALYSIS on TRAIN ONLY ===</span>
+<span class="tok-fn">suppressMessages</span>(
+  <span class="tok-fn">invisible</span>(<span class="tok-fn">capture.output</span>(
+    fa.parallel(train_scaled, fa = <span class="tok-str">&quot;pc&quot;</span>, n.iter = 100)
+  ))
+)</code></pre>
+<pre class="code-block"><code><span class="tok-comment"># === PCA PROJECTIONS ===</span>
+train_pca <span class="tok-op">&lt;-</span> <span class="tok-fn">as.data.frame</span>(<span class="tok-fn">predict</span>(pca_result, newdata = train_scaled))
+test_pca  <span class="tok-op">&lt;-</span> <span class="tok-fn">as.data.frame</span>(<span class="tok-fn">predict</span>(pca_result, newdata = test_scaled))
+
+train_pca$label <span class="tok-op">&lt;-</span> train_data$label
+test_pca$label  <span class="tok-op">&lt;-</span> test_data$label</code></pre>
+<pre class="code-block"><code><span class="tok-comment"># === VARIMAX ROTATION (INTERPRETATION ONLY) ===</span>
+fa_result <span class="tok-op">&lt;-</span> principal(features_scaled, nfactors = 4, rotate = <span class="tok-str">&quot;varimax&quot;</span>)
+<span class="tok-fn">fa.diagram</span>(fa_result, cex = 0.6)</code></pre>
+<pre class="code-block"><code>
+
+<span class="tok-kw">library</span>(ggplot2)
+<span class="tok-kw">library</span>(patchwork)
+
+<span class="tok-comment"># Scatter plot of PC1 vs PC2 from leakage-free training projection</span>
+pca_df <span class="tok-op">&lt;-</span> <span class="tok-fn">data.frame</span>(PC1 = train_pca$PC1, PC2 = train_pca$PC2, label = train_pca$label)
+
+p1 <span class="tok-op">&lt;-</span> <span class="tok-fn">ggplot</span>(pca_df, <span class="tok-fn">aes</span>(x = PC1, y = PC2, color = label)) +
+  <span class="tok-fn">geom_point</span>(alpha = 0.6) +
+  stat_ellipse(aes(group = label), linetype = <span class="tok-str">&quot;dashed&quot;</span>) +
+  <span class="tok-fn">theme_minimal</span>(base_size = 10) +
+  labs(title = <span class="tok-str">&quot;PC1 vs PC2 by Label&quot;</span>)
+
+<span class="tok-comment"># Scree plot manually from training PCA</span>
+var_explained <span class="tok-op">&lt;-</span> pca_result$sdev^2 / <span class="tok-fn">sum</span>(pca_result$sdev^2)
+scree_df <span class="tok-op">&lt;-</span> <span class="tok-fn">data.frame</span>(PC = 1:<span class="tok-fn">length</span>(var_explained), Variance = var_explained)
+
+p2 <span class="tok-op">&lt;-</span> <span class="tok-fn">ggplot</span>(scree_df, <span class="tok-fn">aes</span>(x = PC, y = Variance)) +
+  <span class="tok-fn">geom_line</span>() +
+  <span class="tok-fn">geom_point</span>() +
+  <span class="tok-fn">theme_minimal</span>(base_size = 10) +
+  labs(title = <span class="tok-str">&quot;Scree Plot&quot;</span>, x = <span class="tok-str">&quot;Principal Component&quot;</span>, y = <span class="tok-str">&quot;Proportion of Variance&quot;</span>)
+
+<span class="tok-comment"># Combine side by side</span>
+p2 + p1</code></pre>
+<p><strong>Varimax-Rotated Component Interpretation</strong></p>
+<p>To aid interpretability, an orthogonal varimax rotation was applied to the 5 retained principal components. This redistributes variance to create a simpler loading structure. Overall variance remains the same, but varimax aligns features more closely with the original features (X1-20) where each feature loads more strongly on just one component - while preserving the overall explained variance. The rotated loadings <strong>(Figure 9)</strong> highlighted clearer latent groupings, with components aligning more distinctly with correlated feature blocks (e.g., X7–X10, X17–X20). Rotation was applied only to the top 5 components to maximise interpretability without compromising the variance-ranked structure. The full set of 12 unrotated components was used for classification tasks to retain the strict variance ordering essential for modelling performance.</p>
+<pre class="code-block"><code><span class="tok-comment"># After doing the varimax rotation on TRAINING data only (leakage-safe):</span>
+fa_result <span class="tok-op">&lt;-</span> principal(train_scaled, nfactors = 5, rotate = <span class="tok-str">&quot;varimax&quot;</span>)  <span class="tok-comment"># use train_scaled, not full data</span>
+
+<span class="tok-comment"># Convert loadings to a data frame</span>
+loadings_df <span class="tok-op">&lt;-</span> <span class="tok-fn">as.data.frame</span>(fa_result$loadings[1:20, ])
+loadings_df$Feature <span class="tok-op">&lt;-</span> <span class="tok-fn">rownames</span>(loadings_df)
+
+<span class="tok-comment"># Reshape for ggplot</span>
+<span class="tok-kw">library</span>(tidyr)
+<span class="tok-kw">library</span>(ggplot2)
+loadings_long <span class="tok-op">&lt;-</span> <span class="tok-fn">pivot_longer</span>(loadings_df, 
+                              cols = starts_with(<span class="tok-str">&quot;RC&quot;</span>), 
+                              names_to = <span class="tok-str">&quot;Component&quot;</span>, 
+                              values_to = <span class="tok-str">&quot;Loading&quot;</span>)
+
+<span class="tok-comment"># Ensure Feature is ordered from X1 to X20</span>
+loadings_long$Feature <span class="tok-op">&lt;-</span> factor(loadings_long$Feature, levels = paste0(<span class="tok-str">&quot;X&quot;</span>, 1:20))
+
+<span class="tok-comment"># Heatmap with text labels</span>
+<span class="tok-fn">ggplot</span>(loadings_long, <span class="tok-fn">aes</span>(x = Component, y = Feature, fill = Loading)) +
+  <span class="tok-fn">geom_tile</span>() +
+  geom_text(aes(label = sprintf(<span class="tok-str">&quot;%.2f&quot;</span>, Loading)), size = 3) +  <span class="tok-comment"># &lt;-- Add labels here</span>
+  scale_fill_gradient2(low = <span class="tok-str">&quot;red&quot;</span>, mid = <span class="tok-str">&quot;white&quot;</span>, high = <span class="tok-str">&quot;blue&quot;</span>, midpoint = 0, limits = <span class="tok-fn">c</span>(-1, 1)) +
+  <span class="tok-fn">labs</span>(
+    title = <span class="tok-str">&quot;Heatmap of Varimax-Rotated Loadings&quot;</span>,
+    x = <span class="tok-str">&quot;Rotated Component&quot;</span>,
+    y = <span class="tok-str">&quot;Original Feature&quot;</span>
+  ) +
+  <span class="tok-fn">theme_minimal</span>(base_size = 12)</code></pre>
+<p><strong>Figure 9</strong> shows a heatmap of varimax-rotated PCA loadings (top 5 components), improving interpretability by aligning each component with a distinct set of original features. Rotation highlighted coherent latent groupings - such as a contrast between X17–X20, a tightly correlated X7–X9–X8 cluster, and smaller mixed components - suggesting structured biological variation across the feature set. These interpretations supported the decision to retain five principal components for interpretability-focused analyses, while using all 12 for classification.</p>
+<h3>3.5 Model Preparation and Training</h3>
+<p>Prior to modeling, highly skewed features (X8 &amp; X10) were log-transformed using log1p() to stabilise variance and reduce the influence of outliers, while preserving any zero values. All numeric variables were then standardised using scale() (mean = 0, SD = 1) to ensure fair contribution in distance - and variance-based methods such as PCA and SVM. This preprocessing improved numerical stability and model interpretability. Four classifiers were trained using stratified 80/20 splits:</p>
+<ul><li><strong>Logistic Regression</strong> (multinomial, baseline)</li><li><strong>Random Forest</strong> (ensemble, robust to collinearity &amp; resistant to noise)</li><li><strong>Support Vector Machine</strong> (RBF kernel, non-linear boundaries)</li><li><strong>Naïve Bayes</strong> (probabilistic baseline).</li></ul>
+<p>Each model was evaluated on three feature strategies: full features, PCA (top 5), and PCA (top 12). Performance was assessed via misclassification rate and confusion matrices.</p>
+<p>Given the multicollinearity, outliers, and partial separability observed during EDA and PCA, these four models offer a range of interpretability, complexity, and assumptions, allowing a robust comparison. Random Forest was chosen for its resilience to noise and multicollinearity, while Logistic Regression offers a simple linear baseline. SVM can handle non-linear boundaries, and Naïve Bayes adds a probabilistic perspective.</p>
+<h3>3.6 Bootstrapped Simulation</h3>
+<p>To evaluate model stability and generalisability, stratified bootstrapping was used to generate a simulated dataset that preserved original class proportions and feature distributions by sampling with replacement within class groups. PCA was applied only to the training set to prevent data leakage, and the test set was projected using derived loadings-ensuring a valid evaluation pipeline. Histogram and PCA-cluster comparisons confirmed that the simulated data retained comparable variance and feature structure, with class-wise mean and variance differences remaining below 6.5%. This validated the simulation as a robust testbed for assessing the effects of dimensionality reduction, model complexity, and class structure on classifier performance. All random sampling procedures, including bootstrapping, stratified splitting, and clustering initialisation, were made reproducible using set.seed(123).</p>
+<h3>3.7 Unsupervised Learning</h3>
+<p>To explore latent structure without supervision:</p>
+<p>K-Means Clustering: Elbow method supported k = 4. Clusters were visualised in PCA space and compared against true labels <strong>(Figure 10)</strong>.</p>
+<pre class="code-block"><code><span class="tok-comment"># Bootstrapping</span>
+<span class="tok-comment"># Drop any Mahalanobis columns before simulation</span>
+data_clean <span class="tok-op">&lt;-</span> data_imputed <span class="tok-op">%&gt;%</span> 
+  dplyr::select(-starts_with(<span class="tok-str">&quot;mahal&quot;</span>))</code></pre>
+<pre class="code-block"><code><span class="tok-kw">library</span>(rsample)
+<span class="tok-kw">library</span>(dplyr)
+<span class="tok-kw">library</span>(purrr)
+
+<span class="tok-fn">set.seed</span>(123)
+
+<span class="tok-comment"># 1. Bootstrap with row_id for tracking</span>
+simulated_data <span class="tok-op">&lt;-</span> data_clean <span class="tok-op">%&gt;%</span>
+  mutate(row_id = row_number()) <span class="tok-op">%&gt;%</span>
+  group_split(label) <span class="tok-op">%&gt;%</span>
+  map_dfr(~ .x <span class="tok-op">%&gt;%</span> slice_sample(n = nrow(.), replace = <span class="tok-kw">TRUE</span>)) <span class="tok-op">%&gt;%</span>
+  <span class="tok-fn">mutate</span>(row_id = <span class="tok-fn">row_number</span>())
+
+<span class="tok-comment"># 2. Stratified train-test split using simulated_data</span>
+split_sim <span class="tok-op">&lt;-</span> initial_split(simulated_data, prop = 0.8, strata = <span class="tok-str">&quot;label&quot;</span>)
+train_idx <span class="tok-op">&lt;-</span> <span class="tok-fn">training</span>(split_sim)
+test_idx  <span class="tok-op">&lt;-</span> <span class="tok-fn">testing</span>(split_sim)
+
+<span class="tok-comment"># 3. Extract raw features before PCA</span>
+train_raw <span class="tok-op">&lt;-</span> dplyr::select(train_idx, starts_with(<span class="tok-str">&quot;X&quot;</span>))
+test_raw  <span class="tok-op">&lt;-</span> dplyr::select(test_idx,  starts_with(<span class="tok-str">&quot;X&quot;</span>))
+
+
+<span class="tok-comment"># 4. Run PCA on *training* set only</span>
+pca_train <span class="tok-op">&lt;-</span> prcomp(train_raw, scale. = <span class="tok-kw">TRUE</span>)
+
+<span class="tok-comment"># 5. Project both sets into the PCA space using training PCA</span>
+train_sim_pca  <span class="tok-op">&lt;-</span> as.data.frame(predict(pca_train, newdata = train_raw)[, 1:5])  <span class="tok-op">%&gt;%</span>
+  <span class="tok-fn">mutate</span>(label = train_idx$label)
+
+test_sim_pca   <span class="tok-op">&lt;-</span> as.data.frame(predict(pca_train, newdata = test_raw)[, 1:5])   <span class="tok-op">%&gt;%</span>
+  <span class="tok-fn">mutate</span>(label = test_idx$label)
+
+train_sim_pc12 <span class="tok-op">&lt;-</span> as.data.frame(predict(pca_train, newdata = train_raw)[, 1:12]) <span class="tok-op">%&gt;%</span>
+  <span class="tok-fn">mutate</span>(label = train_idx$label)
+
+test_sim_pc12  <span class="tok-op">&lt;-</span> as.data.frame(predict(pca_train, newdata = test_raw)[, 1:12])  <span class="tok-op">%&gt;%</span>
+  <span class="tok-fn">mutate</span>(label = test_idx$label)
+
+<span class="tok-comment"># Create train/test datasets with original features</span>
+train_sim_all <span class="tok-op">&lt;-</span> train_idx <span class="tok-op">%&gt;%</span>
+  dplyr::select(label, starts_with(<span class="tok-str">&quot;X&quot;</span>))
+
+test_sim_all <span class="tok-op">&lt;-</span> test_idx <span class="tok-op">%&gt;%</span>
+  dplyr::select(label, starts_with(<span class="tok-str">&quot;X&quot;</span>))
+
+
+<span class="tok-comment"># 6. Optional sanity checks</span>
+stopifnot(length(train_sim_pca$label) <span class="tok-op">==</span> <span class="tok-fn">nrow</span>(train_idx))
+stopifnot(length(test_sim_pc12$label) <span class="tok-op">==</span> <span class="tok-fn">nrow</span>(test_idx))</code></pre>
+<pre class="code-block"><code>
+source(<span class="tok-str">&quot;Classification-block.r&quot;</span>, local = knitr::<span class="tok-fn">knit_global</span>())</code></pre>
+<pre class="code-block"><code><span class="tok-comment"># Reuse handpicked features</span>
+handpicked_vars <span class="tok-op">&lt;-</span> c(<span class="tok-str">&quot;X2&quot;</span>, <span class="tok-str">&quot;X3&quot;</span>, <span class="tok-str">&quot;X4&quot;</span>, <span class="tok-str">&quot;X9&quot;</span>, <span class="tok-str">&quot;X11&quot;</span>, <span class="tok-str">&quot;X18&quot;</span>, <span class="tok-str">&quot;X19&quot;</span>)
+
+<span class="tok-comment"># Select and scale original &amp; simulated data</span>
+orig_clust_data <span class="tok-op">&lt;-</span> <span class="tok-fn">scale</span>(data_imputed[, handpicked_vars])
+sim_clust_data  <span class="tok-op">&lt;-</span> <span class="tok-fn">scale</span>(simulated_data[, handpicked_vars])</code></pre>
+<pre class="code-block"><code><span class="tok-fn">set.seed</span>(123)
+kmeans_orig <span class="tok-op">&lt;-</span> <span class="tok-fn">kmeans</span>(orig_clust_data, centers = 4, nstart = 25)
+kmeans_sim  <span class="tok-op">&lt;-</span> <span class="tok-fn">kmeans</span>(sim_clust_data,  centers = 4, nstart = 25)
+
+<span class="tok-comment"># Add cluster labels for visualisation</span>
+pca_orig <span class="tok-op">&lt;-</span> <span class="tok-fn">prcomp</span>(orig_clust_data)
+pca_sim  <span class="tok-op">&lt;-</span> <span class="tok-fn">prcomp</span>(sim_clust_data)
+
+pca_df_orig <span class="tok-op">&lt;-</span> <span class="tok-fn">data.frame</span>(pca_orig$x[, 1:2],
+                          Cluster = <span class="tok-fn">factor</span>(kmeans_orig$cluster),
+                          TrueLabel = data_imputed$label)
+
+pca_df_sim <span class="tok-op">&lt;-</span> <span class="tok-fn">data.frame</span>(pca_sim$x[, 1:2],
+                         Cluster = <span class="tok-fn">factor</span>(kmeans_sim$cluster),
+                         TrueLabel = simulated_data$label)</code></pre>
+<pre class="code-block"><code>
+p1 <span class="tok-op">&lt;-</span> <span class="tok-fn">ggplot</span>(pca_df_orig, <span class="tok-fn">aes</span>(x = PC1, y = PC2, color = Cluster)) +
+  <span class="tok-fn">geom_point</span>(alpha = 0.7) +
+  labs(title = <span class="tok-str">&quot;Original Data&quot;</span>, x = <span class="tok-str">&quot;PC1&quot;</span>, y = <span class="tok-str">&quot;PC2&quot;</span>, color = <span class="tok-str">&quot;Cluster&quot;</span>) +
+  <span class="tok-fn">theme_minimal</span>(base_size = 14) +  <span class="tok-comment"># sets a general font size</span>
+  <span class="tok-fn">theme</span>(
+    plot.title = element_text(size = 16, face = <span class="tok-str">&quot;bold&quot;</span>),
+    axis.title = element_text(size = 14, face = <span class="tok-str">&quot;bold&quot;</span>),
+    axis.text = <span class="tok-fn">element_text</span>(size = 12),
+    legend.title = element_text(size = 12, face = <span class="tok-str">&quot;bold&quot;</span>),
+    legend.text = <span class="tok-fn">element_text</span>(size = 11)
+  )
+
+p2 <span class="tok-op">&lt;-</span> <span class="tok-fn">ggplot</span>(pca_df_sim, <span class="tok-fn">aes</span>(x = PC1, y = PC2, color = Cluster)) +
+  <span class="tok-fn">geom_point</span>(alpha = 0.7) +
+  labs(title = <span class="tok-str">&quot;Simulated Data&quot;</span>, x = <span class="tok-str">&quot;PC1&quot;</span>, y = <span class="tok-str">&quot;PC2&quot;</span>, color = <span class="tok-str">&quot;Cluster&quot;</span>) +
+  <span class="tok-fn">theme_minimal</span>(base_size = 14) +
+  <span class="tok-fn">theme</span>(
+    plot.title = element_text(size = 16, face = <span class="tok-str">&quot;bold&quot;</span>),
+    axis.title = element_text(size = 14, face = <span class="tok-str">&quot;bold&quot;</span>),
+    axis.text = <span class="tok-fn">element_text</span>(size = 12),
+    legend.title = element_text(size = 12, face = <span class="tok-str">&quot;bold&quot;</span>),
+    legend.text = <span class="tok-fn">element_text</span>(size = 11)
+  )
+
+<span class="tok-comment"># Combine</span>
+p1 + p2 + <span class="tok-fn">plot_annotation</span>(
+  theme = <span class="tok-fn">theme</span>(
+    plot.title = element_text(size = 18, face = <span class="tok-str">&quot;bold&quot;</span>, hjust = 0.5)
+  )
+)</code></pre>
+<h3>3.8 Hierarchical Clustering</h3>
+<p>Hierarchical Clustering: Ward’s method (specifically ward.D2) was applied to scaled handpicked features to create compact, spherical clusters by minimizing total within-cluster variance. This approach complements the PCA-reduced space and is widely used when Euclidean distances are appropriate due to its tendency to minimise within-cluster variance, producing compact, spherical clusters well-suited to Euclidean distance-based PCA-reduced data. Cluster boundaries were visualised with k = 4 cuts on dendrograms, aligned with the known number of classes, in <strong>Figure 11</strong> below. Cluster-label concordance tables were also produced to examine alignment.</p>
+<pre class="code-block"><code><span class="tok-comment"># Distance matrices</span>
+dist_orig <span class="tok-op">&lt;-</span> <span class="tok-fn">dist</span>(orig_clust_data)
+dist_sim  <span class="tok-op">&lt;-</span> <span class="tok-fn">dist</span>(sim_clust_data)
+
+<span class="tok-comment"># Hierarchical clustering using Ward&#x27;s method</span>
+hc_orig <span class="tok-op">&lt;-</span> hclust(dist_orig, method = <span class="tok-str">&quot;ward.D2&quot;</span>)
+hc_sim  <span class="tok-op">&lt;-</span> hclust(dist_sim, method = <span class="tok-str">&quot;ward.D2&quot;</span>)</code></pre>
+<pre class="code-block"><code><span class="tok-fn">par</span>(mfrow = <span class="tok-fn">c</span>(1, 2), mar = <span class="tok-fn">c</span>(4, 2, 3, 1))
+
+<span class="tok-comment"># Smaller main title and axis label size</span>
+plot(hc_orig, main = <span class="tok-str">&quot;Original Data&quot;</span>, labels = <span class="tok-kw">FALSE</span>, cex.main = 0.9, cex.axis = 0.7)
+rect.hclust(hc_orig, k = 4, border = <span class="tok-str">&quot;red&quot;</span>)
+
+plot(hc_sim, main = <span class="tok-str">&quot;Simulated Data&quot;</span>, labels = <span class="tok-kw">FALSE</span>, cex.main = 0.9, cex.axis = 0.7)
+rect.hclust(hc_sim, k = 4, border = <span class="tok-str">&quot;green&quot;</span>)</code></pre>
+<h2>4. Results</h2>
+<h3>4.1 Classification Performance</h3>
+<p>Supervised models were evaluated across three feature strategies: all original features, top 5 PCA components, and top 12 PCA components. Performance was assessed using misclassification error on both original and bootstrapped (simulated) datasets. The results are summarised in <strong>Table 2</strong> below.</p>
+<pre class="code-block"><code><span class="tok-kw">library</span>(kableExtra)
+<span class="tok-kw">library</span>(dplyr)
+
+<span class="tok-comment"># Data</span>
+model_table <span class="tok-op">&lt;-</span> <span class="tok-fn">tribble</span>(
+  ~Model, ~Features, ~`Error (Original)`, ~`Accuracy (Original)`, ~`Error (Simulated)`, ~`Accuracy (Simulated)`,
+
+  <span class="tok-comment"># Logistic Regression</span>
+  <span class="tok-str">&quot;Logistic Regression&quot;</span>, <span class="tok-str">&quot;All&quot;</span>, 15.0, 85.0, 1.8, 98.2,
+  <span class="tok-str">&quot;&quot;</span>, <span class="tok-str">&quot;PCA (5)&quot;</span>, 20.2, 79.8, 23.1, 76.9,
+  <span class="tok-str">&quot;&quot;</span>, <span class="tok-str">&quot;PCA (12)&quot;</span>, 25.5, 74.5, 20.9, 79.1,
+
+  <span class="tok-comment"># Random Forest</span>
+  <span class="tok-str">&quot;Random Forest&quot;</span>, <span class="tok-str">&quot;All&quot;</span>, 9.3, 90.7, 0.0, 100.0,
+  <span class="tok-str">&quot;&quot;</span>, <span class="tok-str">&quot;PCA (5)&quot;</span>, 19.0, 81.0, 9.6, 90.4,
+  <span class="tok-str">&quot;&quot;</span>, <span class="tok-str">&quot;PCA (12)&quot;</span>, 20.0, 80.0, 9.0, 91.0,
+
+  <span class="tok-comment"># SVM</span>
+  <span class="tok-str">&quot;SVM&quot;</span>, <span class="tok-str">&quot;All&quot;</span>, 11.8, 88.2, 0.5, 99.5,
+  <span class="tok-str">&quot;&quot;</span>, <span class="tok-str">&quot;PCA (5)&quot;</span>, 14.5, 85.5, 17.4, 82.6,
+  <span class="tok-str">&quot;&quot;</span>, <span class="tok-str">&quot;PCA (12)&quot;</span>, 1.0, 99.0, 15.0, 85.0,
+
+  <span class="tok-comment"># Naïve Bayes</span>
+  <span class="tok-str">&quot;Naïve Bayes&quot;</span>, <span class="tok-str">&quot;All&quot;</span>, 15.8, 84.2, 0.8, 99.2,
+  <span class="tok-str">&quot;&quot;</span>, <span class="tok-str">&quot;PCA (5)&quot;</span>, 27.7, 72.3, 23.6, 76.4,
+  <span class="tok-str">&quot;&quot;</span>, <span class="tok-str">&quot;PCA (12)&quot;</span>, 2.8, 97.2, 22.4, 77.6
+)
+
+
+<span class="tok-comment"># Helper for synchronized colour gradient</span>
+get_synced_colors <span class="tok-op">&lt;-</span> <span class="tok-kw">function</span>(error) {
+  scales::col_numeric(c(<span class="tok-str">&quot;green&quot;</span>, <span class="tok-str">&quot;yellow&quot;</span>, <span class="tok-str">&quot;red&quot;</span>), domain = <span class="tok-fn">c</span>(0, 25))(error)
+}
+
+<span class="tok-comment"># Add synced background colors manually</span>
+model_table$eo_color <span class="tok-op">&lt;-</span> <span class="tok-fn">get_synced_colors</span>(model_table$`Error (Original)`)
+model_table$es_color <span class="tok-op">&lt;-</span> <span class="tok-fn">get_synced_colors</span>(model_table$`Error (Simulated)`)
+
+<span class="tok-comment"># Apply colouring</span>
+model_table_colored <span class="tok-op">&lt;-</span> model_table <span class="tok-op">%&gt;%</span>
+  <span class="tok-fn">mutate</span>(
+    `Error (Original)` = cell_spec(`Error (Original)`, color = <span class="tok-str">&quot;black&quot;</span>, background = eo_color),
+    `Accuracy (Original)` = cell_spec(`Accuracy (Original)`, color = <span class="tok-str">&quot;black&quot;</span>, background = eo_color),
+    `Error (Simulated)` = cell_spec(`Error (Simulated)`, color = <span class="tok-str">&quot;black&quot;</span>, background = es_color),
+    `Accuracy (Simulated)` = cell_spec(`Accuracy (Simulated)`, color = <span class="tok-str">&quot;black&quot;</span>, background = es_color)
+  )
+
+<span class="tok-comment"># Render the table</span>
+kable(model_table_colored[, 1:6], format = <span class="tok-str">&quot;latex&quot;</span>, booktabs = <span class="tok-kw">TRUE</span>, escape = <span class="tok-kw">FALSE</span>,
+      caption = <span class="tok-str">&quot;Classification Model Performance&quot;</span>) <span class="tok-op">%&gt;%</span>
+  <span class="tok-fn">kable_styling</span>(
+    latex_options = c(<span class="tok-str">&quot;scale_down&quot;</span>, <span class="tok-str">&quot;hold_position&quot;</span>),
+    font_size = 9,
+    stripe_color = <span class="tok-kw">NULL</span>  <span class="tok-comment"># &lt;--- this disables default row coloring fully</span>
+  )</code></pre>
+<pre class="code-block"><code>
+<span class="tok-comment"># Save the clean version before styling</span>
+
+model_table_clean <span class="tok-op">&lt;-</span> <span class="tok-fn">tribble</span>(
+  ~Model, ~Features, ~`Error (Original)`, ~`Accuracy (Original)`, ~`Error (Simulated)`, ~`Accuracy (Simulated)`,
+
+  <span class="tok-str">&quot;Logistic Regression&quot;</span>, <span class="tok-str">&quot;All&quot;</span>, 15.0, 85.0, 1.8, 98.2,
+  <span class="tok-str">&quot;&quot;</span>, <span class="tok-str">&quot;PCA (5)&quot;</span>, 20.2, 79.8, 23.1, 76.9,
+  <span class="tok-str">&quot;&quot;</span>, <span class="tok-str">&quot;PCA (12)&quot;</span>, 25.5, 74.5, 20.9, 79.1,
+
+  <span class="tok-str">&quot;Random Forest&quot;</span>, <span class="tok-str">&quot;All&quot;</span>, 9.3, 90.7, 0.0, 100.0,
+  <span class="tok-str">&quot;&quot;</span>, <span class="tok-str">&quot;PCA (5)&quot;</span>, 19.0, 81.0, 9.6, 90.4,
+  <span class="tok-str">&quot;&quot;</span>, <span class="tok-str">&quot;PCA (12)&quot;</span>, 20.0, 80.0, 9.0, 91.0,
+
+  <span class="tok-str">&quot;SVM&quot;</span>, <span class="tok-str">&quot;All&quot;</span>, 11.8, 88.2, 0.5, 99.5,
+  <span class="tok-str">&quot;&quot;</span>, <span class="tok-str">&quot;PCA (5)&quot;</span>, 14.5, 85.5, 17.4, 82.6,
+  <span class="tok-str">&quot;&quot;</span>, <span class="tok-str">&quot;PCA (12)&quot;</span>, 1.0, 99.0, 15.0, 85.0,
+
+  <span class="tok-str">&quot;Naïve Bayes&quot;</span>, <span class="tok-str">&quot;All&quot;</span>, 15.8, 84.2, 0.8, 99.2,
+  <span class="tok-str">&quot;&quot;</span>, <span class="tok-str">&quot;PCA (5)&quot;</span>, 27.7, 72.3, 23.6, 76.4,
+  <span class="tok-str">&quot;&quot;</span>, <span class="tok-str">&quot;PCA (12)&quot;</span>, 2.8, 97.2, 22.4, 77.6
+)
+
+
+
+<span class="tok-kw">library</span>(tidyr)
+<span class="tok-kw">library</span>(dplyr)
+<span class="tok-kw">library</span>(ggplot2)
+
+<span class="tok-comment"># Remove blanks before plotting</span>
+model_table_clean <span class="tok-op">&lt;-</span> model_table_clean <span class="tok-op">%&gt;%</span>
+  filter(Model <span class="tok-op">!=</span> <span class="tok-str">&quot;&quot;</span>)
+
+<span class="tok-comment"># Reshape to long format</span>
+errors_long <span class="tok-op">&lt;-</span> model_table_clean <span class="tok-op">%&gt;%</span>
+  <span class="tok-fn">pivot_longer</span>(
+    cols = <span class="tok-fn">c</span>(`Error (Original)`, `Error (Simulated)`),
+    names_to = <span class="tok-str">&quot;Dataset&quot;</span>,
+    values_to = <span class="tok-str">&quot;Error&quot;</span>
+  ) <span class="tok-op">%&gt;%</span>
+  <span class="tok-fn">mutate</span>(
+    Dataset = ifelse(Dataset <span class="tok-op">==</span> <span class="tok-str">&quot;Error (Original)&quot;</span>, <span class="tok-str">&quot;Original&quot;</span>, <span class="tok-str">&quot;Simulated&quot;</span>),
+    Strategy = Features,
+    Model = <span class="tok-fn">factor</span>(Model)  <span class="tok-comment"># Let ggplot handle consistent colors</span>
+  )
+
+<span class="tok-comment"># Plot</span>
+<span class="tok-fn">ggplot</span>(errors_long, <span class="tok-fn">aes</span>(x = Strategy, y = Error, fill = Model)) +
+  geom_col(position = <span class="tok-str">&quot;dodge&quot;</span>) +
+  <span class="tok-fn">facet_wrap</span>(~Dataset) +
+  labs(x = <span class="tok-str">&quot;Input Feature Strategy&quot;</span>, y = <span class="tok-str">&quot;Misclassification Error&quot;</span>) +
+  <span class="tok-fn">theme_minimal</span>(base_size = 13) +
+  <span class="tok-fn">theme</span>(axis.text.x = <span class="tok-fn">element_text</span>(angle = 45, hjust = 1))</code></pre>
+<pre class="code-block"><code><span class="tok-comment"># === Libraries ===</span>
+<span class="tok-kw">library</span>(reshape2)
+<span class="tok-kw">library</span>(pROC)
+<span class="tok-kw">library</span>(ggplot2)
+<span class="tok-kw">library</span>(dplyr)
+<span class="tok-kw">library</span>(patchwork)
+<span class="tok-kw">library</span>(tidyr)
+
+<span class="tok-comment"># === Ensure consistent label encoding across pipeline ===</span>
+<span class="tok-comment"># (Use this once after data import/prep)</span>
+data_imputed$label <span class="tok-op">&lt;-</span> factor(data_imputed$label, levels = c(<span class="tok-str">&quot;A&quot;</span>, <span class="tok-str">&quot;B&quot;</span>, <span class="tok-str">&quot;C&quot;</span>, <span class="tok-str">&quot;D&quot;</span>))
+
+<span class="tok-comment"># === ROC Curve for Single Model (Multiclass) ===</span>
+plot_roc_single_model <span class="tok-op">&lt;-</span> <span class="tok-kw">function</span>(model, test_data, palette = <span class="tok-str">&quot;Set1&quot;</span>, model_type = <span class="tok-kw">NULL</span>) {
+  classes <span class="tok-op">&lt;-</span> <span class="tok-fn">levels</span>(test_data$label)
+  
+  <span class="tok-comment"># === Predicted probabilities based on model type</span>
+  probs <span class="tok-op">&lt;-</span> <span class="tok-fn">switch</span>(model_type,
+    <span class="tok-str">&quot;svm&quot;</span> = attr(predict(model, test_data, probability = <span class="tok-kw">TRUE</span>), <span class="tok-str">&quot;probabilities&quot;</span>) <span class="tok-op">%&gt;%</span> <span class="tok-fn">as.data.frame</span>(),
+    <span class="tok-str">&quot;rf&quot;</span>  = predict(model, newdata = test_data, type = <span class="tok-str">&quot;prob&quot;</span>) <span class="tok-op">%&gt;%</span> <span class="tok-fn">as.data.frame</span>(),
+    <span class="tok-str">&quot;nnet&quot;</span> = predict(model, newdata = test_data, type = <span class="tok-str">&quot;probs&quot;</span>) <span class="tok-op">%&gt;%</span> <span class="tok-fn">as.data.frame</span>(),
+    <span class="tok-comment"># Default fallback – attempt to use type = &quot;probs&quot;</span>
+    predict(model, newdata = test_data, type = <span class="tok-str">&quot;probs&quot;</span>) <span class="tok-op">%&gt;%</span> <span class="tok-fn">as.data.frame</span>()
+  )
+  
+  <span class="tok-comment"># === Build ROC data for each class</span>
+  roc_data <span class="tok-op">&lt;-</span> purrr::map_dfr(classes, <span class="tok-kw">function</span>(cl) {
+    roc_obj <span class="tok-op">&lt;-</span> pROC::roc(as.numeric(test_data$label <span class="tok-op">==</span> cl), probs[[cl]], quiet = <span class="tok-kw">TRUE</span>)
+    <span class="tok-fn">data.frame</span>(
+      fpr = <span class="tok-fn">rev</span>(roc_obj$specificities),
+      tpr = <span class="tok-fn">rev</span>(roc_obj$sensitivities),
+      class = cl,
+      auc = <span class="tok-fn">round</span>(pROC::<span class="tok-fn">auc</span>(roc_obj), 3)
+    )
+  })
+
+  <span class="tok-comment"># === Format legend labels</span>
+  legend_labels <span class="tok-op">&lt;-</span> roc_data <span class="tok-op">%&gt;%</span>
+    group_by(class) <span class="tok-op">%&gt;%</span>
+    summarise(auc = first(auc)) <span class="tok-op">%&gt;%</span>
+    mutate(label = paste0(class, <span class="tok-str">&quot; (AUC = &quot;</span>, auc, <span class="tok-str">&quot;)&quot;</span>))
+
+  roc_data <span class="tok-op">&lt;-</span> left_join(roc_data, legend_labels, by = <span class="tok-str">&quot;class&quot;</span>)
+
+  <span class="tok-comment"># === Plot</span>
+  <span class="tok-fn">ggplot</span>(roc_data, <span class="tok-fn">aes</span>(x = fpr, y = tpr, color = label, group = class)) +
+    <span class="tok-fn">geom_line</span>(linewidth = 1.2) +
+    geom_abline(linetype = <span class="tok-str">&quot;dashed&quot;</span>, color = <span class="tok-str">&quot;grey70&quot;</span>) +
+    <span class="tok-fn">labs</span>(
+      title = <span class="tok-str">&quot;ROC Curve by Class&quot;</span>,
+      x = <span class="tok-str">&quot;False Positive Rate&quot;</span>, y = <span class="tok-str">&quot;True Positive Rate&quot;</span>,
+      color = <span class="tok-str">&quot;Class (AUC)&quot;</span>
+    ) +
+    <span class="tok-fn">scale_color_brewer</span>(palette = palette) +
+    <span class="tok-fn">theme_minimal</span>(base_size = 14) +
+    theme(legend.position = <span class="tok-str">&quot;bottom&quot;</span>)
+}
+
+<span class="tok-comment"># === Confusion Matrix Plot (Generic) ===</span>
+plot_conf_matrix <span class="tok-op">&lt;-</span> <span class="tok-kw">function</span>(model, test_data, title = <span class="tok-str">&quot;Confusion Matrix&quot;</span>) {
+  pred_labels <span class="tok-op">&lt;-</span> <span class="tok-fn">predict</span>(model, test_data)
+  
+  cm <span class="tok-op">&lt;-</span> <span class="tok-fn">table</span>(Predicted = pred_labels, Actual = test_data$label)
+  cm_df <span class="tok-op">&lt;-</span> <span class="tok-fn">as.data.frame</span>(cm)
+
+  <span class="tok-fn">ggplot</span>(cm_df, <span class="tok-fn">aes</span>(x = Actual, y = Predicted, fill = Freq)) +
+    <span class="tok-fn">geom_tile</span>() +
+    geom_text(aes(label = Freq), color = <span class="tok-str">&quot;white&quot;</span>, size = 5) +
+    scale_fill_gradient(low = <span class="tok-str">&quot;steelblue&quot;</span>, high = <span class="tok-str">&quot;darkred&quot;</span>) +
+    labs(title = title, x = <span class="tok-str">&quot;Actual&quot;</span>, y = <span class="tok-str">&quot;Predicted&quot;</span>) +
+    <span class="tok-fn">theme_minimal</span>(base_size = 14) +
+    <span class="tok-fn">coord_fixed</span>()
+}</code></pre>
+<pre class="code-block"><code><span class="tok-comment"># Generate plots separately</span>
+roc_lr <span class="tok-op">&lt;-</span> plot_roc_single_model(model_all, test_all, model_type = <span class="tok-str">&quot;nnet&quot;</span>)
+cm_lr  <span class="tok-op">&lt;-</span> <span class="tok-fn">plot_conf_matrix</span>(model_all, test_all)
+
+<span class="tok-comment"># Combine with a shared outer title</span>
+(roc_lr | cm_lr) +
+  <span class="tok-fn">plot_layout</span>(widths = <span class="tok-fn">c</span>(1, 1)) +
+  <span class="tok-fn">plot_annotation</span>(
+    theme = theme(plot.title = element_text(size = 12, face = <span class="tok-str">&quot;bold&quot;</span>, hjust = 0.5))
+  )</code></pre>
+<pre class="code-block"><code><span class="tok-comment"># Generate plots</span>
+roc_rf <span class="tok-op">&lt;-</span> plot_roc_single_model(rf_all, test_all, model_type = <span class="tok-str">&quot;rf&quot;</span>)
+cm_rf  <span class="tok-op">&lt;-</span> <span class="tok-fn">plot_conf_matrix</span>(rf_all, test_all)
+
+<span class="tok-comment"># Combine with shared layout</span>
+(roc_rf | cm_rf) +
+  <span class="tok-fn">plot_layout</span>(widths = <span class="tok-fn">c</span>(1, 1)) +
+  <span class="tok-fn">plot_annotation</span>(
+    theme = theme(plot.title = element_text(size = 12, face = <span class="tok-str">&quot;bold&quot;</span>, hjust = 0.5))
+  )</code></pre>
+<h3>4.2 Key Findings</h3>
+<h4>Supervised Learning</h4>
+<ul><li><strong>Random Forest</strong>, using all original features, was the most accurate model on real data (9.3% error) and achieved perfect classification (0.0% error) on simulated data.</li><li><strong>SVM</strong> and <strong>Naïve Bayes</strong> significantly improved with PCA, especially using the top 12 principal components, outperforming their full-feature versions.</li><li><strong>PCA improved model performance and stability</strong>, particularly for classifiers assuming linearity (Logistic Regression) or feature independence (Naïve Bayes).</li><li><strong>Logistic Regression</strong>, while interpretable, underperformed across all versions - but showed excellent simulated accuracy using all features (1.8% error), suggesting sensitivity to noise and multicollinearity.</li><li><strong>Performance trends were consistent across original and simulated datasets</strong>, supporting the stability of PCA-based pipelines and the robustness of ensemble methods.</li><li><strong>Handpicked features were deprecated</strong> after being outperformed by PCA strategies in every supervised model - highlighting the value of data-driven reduction over manual selection in the case of supervised learning.</li></ul>
+<h4>Unsupervised Learning</h4>
+<ul><li><strong>PCA-12 enabled the most class-aligned clustering</strong>, with K-means and HC both producing clusters that clearly corresponded to specific labels, especially Class C.</li><li><strong>PCA-5 provided moderate improvements in separability</strong> but less distinct class alignment compared to PCA-12.</li><li><strong>The handpicked feature set no longer outperformed PCA, post a data-leakage issue that was fixed in the PCA pipeline</strong>; its clusters were less distinct post-fix, particularly in the simulated dataset.</li><li><strong>These findings reinforce the value of data-driven dimensionality reduction</strong> in unsupervised contexts, where meaningful latent groupings can emerge more cleanly from well-structured PCA inputs.</li></ul>
+<h2>5. Discussion</h2>
+<p>This analysis assessed the effectiveness and robustness of multiple supervised and unsupervised learning methods across original and bootstrapped datasets. Key insights emerged regarding feature preprocessing, dimensionality reduction, model performance, and generalisability.</p>
+<h3>5.1 Supervised Model Performance</h3>
+<p>Notably, Random Forest achieved perfect classification (0% error) on the simulated data. However, this result should be interpreted with caution. The stratified bootstrapping process preserved original class-conditional distributions with minimal added noise, potentially simplifying the classification task. This suggests excellent internal consistency and model capacity, but does not guarantee real-world generalisability - particularly under unseen or noisier distributions. This reinforces the importance of validating ensemble methods against external datasets with more diverse or noisy characteristics.</p>
+<p>While misclassification rate was used as the primary evaluation metric, ROC analysis provided additional insight into class-level discrimination. Random Forest demonstrated outstanding and consistent performance across all classes, with AUCs between 0.994–0.996. In contrast, Logistic Regression with PCA-12 achieved high AUCs for classes A–C (≈ 0.984), but performance dropped for Class D (AUC = 0.859), indicating weaker discrimination in that class despite reasonable overall accuracy.</p>
+<p>Among all classifiers, Random Forest consistently achieved the lowest error rates, particularly on the original dataset (9.3%) and perfect classification on the simulated dataset (0.0%). Its robustness to multicollinearity and outliers likely contributed to this performance, especially given the highly skewed and heterogeneous feature distributions.</p>
+<p>Support Vector Machines (SVM) also performed well, particularly when using the top 12 PCA components, achieving 1.0% error in the original dataset and 15.0% in the simulated. This suggests that non-linear boundaries captured by the RBF kernel aligned well with structure exposed by PCA - though the model still performed best using all features (11.8% error).</p>
+<p>Naïve Bayes, while relatively weak on the full feature set (15.8% error), benefited substantially from PCA. When trained on the top 12 components, it achieved 2.8% error on the original data and 22.4% on the simulated, supporting the idea that PCA helps satisfy its assumptions of conditional independence.</p>
+<p>Logistic Regression, while interpretable, underperformed relative to the others. It reached 15.0% error with all features, but saw performance degrade on PCA-reduced data (25.5% error with PCA-12 on original data), suggesting limitations when complex class boundaries are projected into lower dimensions.</p>
+<h3>5.2 Dimensionality Strategy Trade-offs</h3>
+<p>PCA proved valuable in reducing dimensionality and multicollinearity while preserving performance in many cases. The top 12 components consistently outperformed the top 5, capturing ~82% of variance and likely retaining more class-relevant signal. However, the best results (e.g., Random Forest) were still obtained using the full feature set, suggesting that PCA introduces modest trade-offs between compression and fidelity.</p>
+<p>The handpicked feature subset was ultimately deprecated. Despite EDA-driven motivation, it introduced subjectivity and was outperformed by PCA in every supervised model. This reinforces the importance of data-driven feature reduction methods in high-dimensional settings.</p>
+<h3>5.3 Generalisability and Simulation Insights</h3>
+<p>Bootstrapping via stratified sampling preserved class balance and distributional structure, allowing for robust testing of model stability. Performance trends on the simulated data mirrored those on the original, affirming the resilience of classification pipelines. Notably, the Random Forest’s 0% error on simulated data implies excellent generalisation when class distributions remain stable-even under resampling.</p>
+<p>Despite this, PCA substantially benefited models such as Naïve Bayes and SVM, where assumptions about independence or smooth decision boundaries are often violated in raw high-dimensional data. PCA not only reduced multicollinearity, but may have helped expose latent structure - making these models more stable and effective.</p>
+<h3>5.4 Unsupervised Learning</h3>
+<p>Both K-means and hierarchical clustering revealed overlapping but interpretable clusters, particularly when using PCA-reduced inputs. The 12-component PCA version led to the most distinct cluster-to-class mappings, with certain clusters showing near-perfect alignment. For example, in KMeans with PCA-12, Cluster 1 aligns almost entirely with Class C, and Cluster 3 (original) aligns predominantly with Class B, especially in the simulated dataset. In Hierarchical Clustering with PCA-12, Cluster 3 strongly captures Class C, while Cluster 1 tends to mix A and D, suggesting partial separation. This improved separability highlights how higher-dimensional PCA retains meaningful latent structure for clustering, improving class alignment over both handpicked and PCA-5 variants. In contrast, the handpicked feature subset, which previously offered slightly better-defined groupings, now shows less clear structure. Clusters span multiple classes with more dispersion, particularly in the simulated version. This suggests that manual feature curation is less effective than data-driven dimensionality reduction for unsupervised discovery, post-cleaning. Interestingly, while PCA-5 still improves cluster interpretability over raw features, it does not isolate distinct classes as cleanly as PCA-12. This supports the idea that retaining more principal components (~82% variance) improves the ability to uncover latent class structure.</p>
+<h3>5.5 Limitations</h3>
+<p>This study has several limitations. First, PCA assumes linearity and may discard non-linear patterns essential for models like Random Forest or SVM. Second, the simulated dataset-while stratified and balanced-may not capture real-world variability or noise, limiting its validity. Third, label-wise mean imputation assumes within-class homogeneity and ignores cross-feature dependencies, which may obscure subtler missingness structures. Finally, clustering via K-means and hierarchical methods relies on geometric assumptions that may misrepresent overlapping or non-convex groupings.</p>
+<h2>6. Conclusion</h2>
+<p>Random Forest using all features consistently delivered the lowest error rates, showing resilience to noise, skew, and collinearity. PCA (12 components) significantly improved generalisability for SVM and Naïve Bayes by reducing multicollinearity and aligning better with model assumptions. Bootstrapped simulation preserved class balance and distributional structure, offering a robust validation setting. Label-wise mean imputation supported interpretability with minimal bias. <strong>Future work</strong> should explore non-linear dimensionality reduction techniques (e.g., Kernel PCA, UMAP), and more advanced imputation strategies to better capture multivariate relationships (e.g., predictive mean matching, missForest). Additional supervised models-such as K-Nearest Neighbours or regularised regressions (Ridge, Lasso)-should be considered to benchmark against SVM and logistic regression. For clustering, density- or graph-based methods (e.g., DBSCAN, spectral clustering) may outperform centroid-based approaches in capturing complex latent structure. Mean Shift Clustering offers a promising alternative, requiring no predefined number of clusters. Cluster evaluation could include formal evaluation using Rand index or similar. Factor Analysis (FA) may outperform PCA in uncovering interpretable latent traits and should be evaluated as a dimensionality reduction technique. Multi-round bootstrapping could be performed to extend to 100+ simulation iterations, creating a distribution of model performance scores and would allow formal CI estimation. The pipeline could also be improved, being converted into modular elements for scalability and ease of use. Finally, external validation could be performed by applying the pipeline to an independent dataset of similar characteristics.</p>
+<h2>7. References</h2>
+<p>Auguie, B., 2017. <em>gridExtra: Functions in Grid graphics.</em> Version 2.3. [software] Available at: https://CRAN.R-project.org/package=gridExtra [Accessed 18 May 2025].</p>
+<p>Henry, L. and Wickham, H., 2020. <em>purrr: Functional programming tools.</em> Version 0.3.4. [software] Available at: https://CRAN.R-project.org/package=purrr [Accessed 21 May 2025].</p>
+<p>Jamshidian, M. and Jalal, S., 2010. Tests of multivariate normality and the detection of outliers. <em>Annual Review of Statistics and Its Application</em>, <em>61</em>(1), pp.1–16. [online] Available at: https://CRAN.R-project.org/package=MissMech [Accessed 8 May 2025].</p>
+<p>Little, R.J.A., 1988. A test of missing completely at random for multivariate data with missing values. <em>Journal of the American Statistical Association</em>, <em>83</em>(404), pp.1198–1202.</p>
+<p>Mahalanobis, P.C., 1936. On the generalised distance in statistics. <em>Proceedings of the National Institute of Sciences of India,</em> <em>2</em>(1), pp.49–55.</p>
+<p>Müller, K. and Wickham, H., 2023. <em>tibble: Simple data frames.</em> Version 3.2.1. [software] Available at: https://CRAN.R-project.org/package=tibble [Accessed 22 May 2025].</p>
+<p>Revelle, W., 2023. <em>psych: Procedures for psychological, psychometric, and personality research.</em> Version 2.3.9. [software] Northwestern University. Available at: https://CRAN.R-project.org/package=psych [Accessed 17 May 2025].</p>
+<p>Robinson, D., 2017. <em>broom: Convert statistical analysis objects into tidy tibbles.</em> Version 0.5.0. [software] Available at: https://CRAN.R-project.org/package=broom [Accessed 19 May 2025].</p>
+<p>Rubin, D.B., 1976. Inference and missing data. <em>Biometrika,</em> 63(3), pp.581–592.</p>
+<p>van Buuren, S. and Groothuis-Oudshoorn, K., 2011. mice: Multivariate imputation by chained equations in R. <em>Journal of Statistical Software,</em> <em>45</em>(3), pp.1–67. [online] Available at: https://www.jstatsoft.org/article/view/v045i03 [Accessed 21 May 2025].</p>
+<p>Wickham, H., 2007. Reshaping data with the reshape package. <em>Journal of Statistical Software,</em> <em>21</em>(12), pp.1–20. [online] Available at: https://www.jstatsoft.org/v21/i12/ [Accessed 20 May 2025].</p>
+  </div>
+
+  <div class="section-divider">
+    <div class="label"><span class="dash"></span>Sourced script</div>
+    <h2>Classification-block.R</h2>
+    <p class="file-note">This script trains all four classifiers (Logistic Regression, Random Forest, SVM, Na&iuml;ve Bayes) on the real and bootstrapped data and is sourced directly by the main analysis above.</p>
+    <div class="content">
+<pre class="code-block"><code><span class="tok-comment"># ⚙️ CLASSIFICATION BLOCK (Fully Silent, Sparc-Safe, Row ID–Proofed)</span>
+<span class="tok-fn">set.seed</span>(123)
+
+<span class="tok-comment"># Libraries</span>
+<span class="tok-kw">library</span>(nnet)
+<span class="tok-kw">library</span>(randomForest)
+<span class="tok-kw">library</span>(e1071)
+<span class="tok-kw">library</span>(dplyr)
+<span class="tok-kw">library</span>(rsample)
+<span class="tok-kw">library</span>(ggplot2)
+<span class="tok-kw">library</span>(tibble)
+
+<span class="tok-comment"># --- Clean and prep ---</span>
+data_cleaned <span class="tok-op">&lt;-</span> data_imputed <span class="tok-op">%&gt;%</span>
+  dplyr::select(-starts_with(<span class="tok-str">&quot;mahal&quot;</span>)) <span class="tok-op">%&gt;%</span>
+  <span class="tok-fn">mutate</span>(
+    label = relevel(as.factor(label), ref = <span class="tok-str">&quot;A&quot;</span>),
+    row_id = <span class="tok-fn">row_number</span>()
+  )
+
+<span class="tok-comment"># --- Split data before any transformations ---</span>
+split <span class="tok-op">&lt;-</span> initial_split(data_cleaned, prop = 0.8, strata = <span class="tok-str">&quot;label&quot;</span>)
+train_data <span class="tok-op">&lt;-</span> <span class="tok-fn">training</span>(split)
+test_data  <span class="tok-op">&lt;-</span> <span class="tok-fn">testing</span>(split)
+
+<span class="tok-comment"># --- Extract &amp; scale features ---</span>
+train_x <span class="tok-op">&lt;-</span> train_data <span class="tok-op">%&gt;%</span> dplyr::select(starts_with(<span class="tok-str">&quot;X&quot;</span>))
+test_x  <span class="tok-op">&lt;-</span> test_data  <span class="tok-op">%&gt;%</span> dplyr::select(starts_with(<span class="tok-str">&quot;X&quot;</span>))
+
+train_scaled <span class="tok-op">&lt;-</span> <span class="tok-fn">scale</span>(train_x)
+train_center <span class="tok-op">&lt;-</span> attr(train_scaled, <span class="tok-str">&quot;scaled:center&quot;</span>)
+train_scale  <span class="tok-op">&lt;-</span> attr(train_scaled, <span class="tok-str">&quot;scaled:scale&quot;</span>)
+test_scaled  <span class="tok-op">&lt;-</span> <span class="tok-fn">scale</span>(test_x, center = train_center, scale = train_scale)
+
+<span class="tok-comment"># --- PCA trained on training set only ---</span>
+pca <span class="tok-op">&lt;-</span> <span class="tok-fn">prcomp</span>(train_scaled)
+
+<span class="tok-comment"># --- Project both sets into PCA space ---</span>
+train_pc5 <span class="tok-op">&lt;-</span> <span class="tok-fn">as.data.frame</span>(<span class="tok-fn">predict</span>(pca, newdata = train_scaled)[, 1:5])
+test_pc5  <span class="tok-op">&lt;-</span> <span class="tok-fn">as.data.frame</span>(<span class="tok-fn">predict</span>(pca, newdata = test_scaled)[, 1:5])
+train_pc12 <span class="tok-op">&lt;-</span> <span class="tok-fn">as.data.frame</span>(<span class="tok-fn">predict</span>(pca, newdata = train_scaled)[, 1:12])
+test_pc12  <span class="tok-op">&lt;-</span> <span class="tok-fn">as.data.frame</span>(<span class="tok-fn">predict</span>(pca, newdata = test_scaled)[, 1:12])
+
+<span class="tok-comment"># --- Add labels and remove row_id ---</span>
+train_pc5$label <span class="tok-op">&lt;-</span> train_data$label
+test_pc5$label  <span class="tok-op">&lt;-</span> test_data$label
+train_pc12$label <span class="tok-op">&lt;-</span> train_data$label
+test_pc12$label  <span class="tok-op">&lt;-</span> test_data$label
+
+<span class="tok-comment"># --- Also prep raw feature input ---</span>
+train_all <span class="tok-op">&lt;-</span> train_data <span class="tok-op">%&gt;%</span> dplyr::select(label, starts_with(<span class="tok-str">&quot;X&quot;</span>))
+test_all  <span class="tok-op">&lt;-</span> test_data  <span class="tok-op">%&gt;%</span> dplyr::select(label, starts_with(<span class="tok-str">&quot;X&quot;</span>))
+
+<span class="tok-comment"># --- Models ---</span>
+model_all  <span class="tok-op">&lt;-</span> multinom(label ~ ., data = train_all, trace = <span class="tok-kw">FALSE</span>)
+model_pc5  <span class="tok-op">&lt;-</span> multinom(label ~ ., data = train_pc5, trace = <span class="tok-kw">FALSE</span>)
+model_pc12 <span class="tok-op">&lt;-</span> multinom(label ~ ., data = train_pc12, trace = <span class="tok-kw">FALSE</span>)
+
+rf_all     <span class="tok-op">&lt;-</span> <span class="tok-fn">randomForest</span>(label ~ ., data = train_all, ntree = 500)
+rf_pc5     <span class="tok-op">&lt;-</span> <span class="tok-fn">randomForest</span>(label ~ ., data = train_pc5, ntree = 500)
+rf_pc12    <span class="tok-op">&lt;-</span> <span class="tok-fn">randomForest</span>(label ~ ., data = train_pc12, ntree = 500)
+
+svm_all    <span class="tok-op">&lt;-</span> svm(label ~ ., data = train_all, kernel = <span class="tok-str">&quot;radial&quot;</span>)
+svm_pc5    <span class="tok-op">&lt;-</span> svm(label ~ ., data = train_pc5, kernel = <span class="tok-str">&quot;radial&quot;</span>)
+svm_pc12   <span class="tok-op">&lt;-</span> svm(label ~ ., data = train_pc12, kernel = <span class="tok-str">&quot;radial&quot;</span>)
+
+nb_all     <span class="tok-op">&lt;-</span> <span class="tok-fn">naiveBayes</span>(label ~ ., data = train_all)
+nb_pc5     <span class="tok-op">&lt;-</span> <span class="tok-fn">naiveBayes</span>(label ~ ., data = train_pc5)
+nb_pc12    <span class="tok-op">&lt;-</span> <span class="tok-fn">naiveBayes</span>(label ~ ., data = train_pc12)
+
+<span class="tok-comment"># --- Error calculation ---</span>
+get_error <span class="tok-op">&lt;-</span> <span class="tok-kw">function</span>(model, test_data) {
+  mean(predict(model, newdata = test_data) <span class="tok-op">!=</span> test_data$label)
+}
+
+errors <span class="tok-op">&lt;-</span> <span class="tok-fn">tibble</span>(
+  Model = rep(c(<span class="tok-str">&quot;Logistic Regression&quot;</span>, <span class="tok-str">&quot;Random Forest&quot;</span>, <span class="tok-str">&quot;SVM&quot;</span>, <span class="tok-str">&quot;Naive Bayes&quot;</span>), each = 3),
+  Strategy = rep(c(<span class="tok-str">&quot;All&quot;</span>, <span class="tok-str">&quot;Top 5 PCs&quot;</span>, <span class="tok-str">&quot;Top 12 PCs&quot;</span>), times = 4),
+  Error = <span class="tok-fn">c</span>(
+    <span class="tok-fn">get_error</span>(model_all, test_all),
+    <span class="tok-fn">get_error</span>(model_pc5, test_pc5),
+    <span class="tok-fn">get_error</span>(model_pc12, test_pc12),
+    
+    <span class="tok-fn">get_error</span>(rf_all, test_all),
+    <span class="tok-fn">get_error</span>(rf_pc5, test_pc5),
+    <span class="tok-fn">get_error</span>(rf_pc12, test_pc12),
+    
+    <span class="tok-fn">get_error</span>(svm_all, test_all),
+    <span class="tok-fn">get_error</span>(svm_pc5, test_pc5),
+    <span class="tok-fn">get_error</span>(svm_pc12, test_pc12),
+    
+    <span class="tok-fn">get_error</span>(nb_all, test_all),
+    <span class="tok-fn">get_error</span>(nb_pc5, test_pc5),
+    <span class="tok-fn">get_error</span>(nb_pc12, test_pc12)
+  )
+)
+
+<span class="tok-comment"># --- Optional plot ---</span>
+<span class="tok-fn">ggplot</span>(errors, <span class="tok-fn">aes</span>(x = Strategy, y = Error, fill = Model)) +
+  geom_col(position = <span class="tok-str">&quot;dodge&quot;</span>) +
+  <span class="tok-fn">labs</span>(
+    title = <span class="tok-str">&quot;Misclassification Error by Model &amp; Feature Strategy&quot;</span>,
+    x = <span class="tok-str">&quot;Input Feature Strategy&quot;</span>, y = <span class="tok-str">&quot;Error Rate&quot;</span>
+  ) +
+  <span class="tok-fn">theme_minimal</span>(base_size = 13)
+
+
+
+<span class="tok-comment"># 🔒 CLASSIFICATION BLOCK — Simulated (Sparc-Protocol Safe)</span>
+
+<span class="tok-fn">set.seed</span>(123)
+
+<span class="tok-kw">library</span>(nnet)
+<span class="tok-kw">library</span>(randomForest)
+<span class="tok-kw">library</span>(e1071)
+<span class="tok-kw">library</span>(dplyr)
+<span class="tok-kw">library</span>(tibble)
+
+<span class="tok-comment"># ✅ Ensure label is factor (to prevent multinom regression errors)</span>
+train_sim_all$label    <span class="tok-op">&lt;-</span> <span class="tok-fn">as.factor</span>(train_sim_all$label)
+test_sim_all$label     <span class="tok-op">&lt;-</span> <span class="tok-fn">as.factor</span>(test_sim_all$label)
+train_sim_pca$label    <span class="tok-op">&lt;-</span> <span class="tok-fn">as.factor</span>(train_sim_pca$label)
+test_sim_pca$label     <span class="tok-op">&lt;-</span> <span class="tok-fn">as.factor</span>(test_sim_pca$label)
+train_sim_pc12$label   <span class="tok-op">&lt;-</span> <span class="tok-fn">as.factor</span>(train_sim_pc12$label)
+test_sim_pc12$label    <span class="tok-op">&lt;-</span> <span class="tok-fn">as.factor</span>(test_sim_pc12$label)
+
+<span class="tok-comment"># ✅ Create base tibble to store results</span>
+sim_errors <span class="tok-op">&lt;-</span> <span class="tok-fn">tibble</span>(
+  Model = <span class="tok-fn">character</span>(),
+  Strategy = <span class="tok-fn">character</span>(),
+  Error = <span class="tok-fn">numeric</span>()
+)
+
+<span class="tok-comment"># ✅ Logistic Regression (trace = FALSE to avoid console spam/warnings)</span>
+lr_sim_all   <span class="tok-op">&lt;-</span> multinom(label ~ ., data = train_sim_all,   trace = <span class="tok-kw">FALSE</span>)
+lr_sim_pca5  <span class="tok-op">&lt;-</span> multinom(label ~ ., data = train_sim_pca,   trace = <span class="tok-kw">FALSE</span>)
+lr_sim_pca12 <span class="tok-op">&lt;-</span> multinom(label ~ ., data = train_sim_pc12,  trace = <span class="tok-kw">FALSE</span>)
+
+<span class="tok-comment"># ✅ Random Forest</span>
+rf_sim_all   <span class="tok-op">&lt;-</span> <span class="tok-fn">randomForest</span>(label ~ ., data = train_sim_all,   ntree = 500)
+rf_sim_pca5  <span class="tok-op">&lt;-</span> <span class="tok-fn">randomForest</span>(label ~ ., data = train_sim_pca,   ntree = 500)
+rf_sim_pca12 <span class="tok-op">&lt;-</span> <span class="tok-fn">randomForest</span>(label ~ ., data = train_sim_pc12,  ntree = 500)
+
+<span class="tok-comment"># ✅ SVM (Radial)</span>
+svm_sim_all   <span class="tok-op">&lt;-</span> svm(label ~ ., data = train_sim_all,   kernel = <span class="tok-str">&quot;radial&quot;</span>)
+svm_sim_pca5  <span class="tok-op">&lt;-</span> svm(label ~ ., data = train_sim_pca,   kernel = <span class="tok-str">&quot;radial&quot;</span>)
+svm_sim_pca12 <span class="tok-op">&lt;-</span> svm(label ~ ., data = train_sim_pc12,  kernel = <span class="tok-str">&quot;radial&quot;</span>)
+
+<span class="tok-comment"># ✅ Naive Bayes</span>
+nb_sim_all   <span class="tok-op">&lt;-</span> <span class="tok-fn">naiveBayes</span>(label ~ ., data = train_sim_all)
+nb_sim_pca5  <span class="tok-op">&lt;-</span> <span class="tok-fn">naiveBayes</span>(label ~ ., data = train_sim_pca)
+nb_sim_pca12 <span class="tok-op">&lt;-</span> <span class="tok-fn">naiveBayes</span>(label ~ ., data = train_sim_pc12)
+
+<span class="tok-comment"># 🧮 Error calculation helper</span>
+get_error <span class="tok-op">&lt;-</span> <span class="tok-kw">function</span>(model, test_data) {
+  preds <span class="tok-op">&lt;-</span> <span class="tok-fn">predict</span>(model, newdata = test_data)
+  mean(preds <span class="tok-op">!=</span> test_data$label)
+}
+
+<span class="tok-comment"># 📊 Append error results</span>
+sim_errors <span class="tok-op">&lt;-</span> sim_errors <span class="tok-op">%&gt;%</span>
+  add_row(Model = <span class="tok-str">&quot;Logistic Regression&quot;</span>, Strategy = <span class="tok-str">&quot;All&quot;</span>,         Error = get_error(lr_sim_all,   test_sim_all)) <span class="tok-op">%&gt;%</span>
+  add_row(Model = <span class="tok-str">&quot;Logistic Regression&quot;</span>, Strategy = <span class="tok-str">&quot;Top 5 PCs&quot;</span>,   Error = get_error(lr_sim_pca5,  test_sim_pca)) <span class="tok-op">%&gt;%</span>
+  add_row(Model = <span class="tok-str">&quot;Logistic Regression&quot;</span>, Strategy = <span class="tok-str">&quot;Top 12 PCs&quot;</span>,  Error = get_error(lr_sim_pca12, test_sim_pc12)) <span class="tok-op">%&gt;%</span>
+  
+  add_row(Model = <span class="tok-str">&quot;Random Forest&quot;</span>,       Strategy = <span class="tok-str">&quot;All&quot;</span>,         Error = get_error(rf_sim_all,   test_sim_all)) <span class="tok-op">%&gt;%</span>
+  add_row(Model = <span class="tok-str">&quot;Random Forest&quot;</span>,       Strategy = <span class="tok-str">&quot;Top 5 PCs&quot;</span>,   Error = get_error(rf_sim_pca5,  test_sim_pca)) <span class="tok-op">%&gt;%</span>
+  add_row(Model = <span class="tok-str">&quot;Random Forest&quot;</span>,       Strategy = <span class="tok-str">&quot;Top 12 PCs&quot;</span>,  Error = get_error(rf_sim_pca12, test_sim_pc12)) <span class="tok-op">%&gt;%</span>
+  
+  add_row(Model = <span class="tok-str">&quot;SVM&quot;</span>,                 Strategy = <span class="tok-str">&quot;All&quot;</span>,         Error = get_error(svm_sim_all,   test_sim_all)) <span class="tok-op">%&gt;%</span>
+  add_row(Model = <span class="tok-str">&quot;SVM&quot;</span>,                 Strategy = <span class="tok-str">&quot;Top 5 PCs&quot;</span>,   Error = get_error(svm_sim_pca5,  test_sim_pca)) <span class="tok-op">%&gt;%</span>
+  add_row(Model = <span class="tok-str">&quot;SVM&quot;</span>,                 Strategy = <span class="tok-str">&quot;Top 12 PCs&quot;</span>,  Error = get_error(svm_sim_pca12, test_sim_pc12)) <span class="tok-op">%&gt;%</span>
+  
+  add_row(Model = <span class="tok-str">&quot;Naive Bayes&quot;</span>,         Strategy = <span class="tok-str">&quot;All&quot;</span>,         Error = get_error(nb_sim_all,   test_sim_all)) <span class="tok-op">%&gt;%</span>
+  add_row(Model = <span class="tok-str">&quot;Naive Bayes&quot;</span>,         Strategy = <span class="tok-str">&quot;Top 5 PCs&quot;</span>,   Error = get_error(nb_sim_pca5,  test_sim_pca)) <span class="tok-op">%&gt;%</span>
+  add_row(Model = <span class="tok-str">&quot;Naive Bayes&quot;</span>,         Strategy = <span class="tok-str">&quot;Top 12 PCs&quot;</span>,  Error = <span class="tok-fn">get_error</span>(nb_sim_pca12, test_sim_pc12))
+
+<span class="tok-comment"># ✅ Optional: flag dataset type for joining later</span>
+sim_errors <span class="tok-op">&lt;-</span> sim_errors <span class="tok-op">%&gt;%</span> mutate(Dataset = <span class="tok-str">&quot;Simulated&quot;</span>)
+</code></pre>
+    </div>
+  </div>
+
+  <a href="index.html#work" class="back-link">&larr; Back to work &amp; projects</a>
+</main>
+
+<footer>&copy; 2026 Alice Brown. Bristol, UK.</footer>
+</body>
+</html>

@@ -132,6 +132,91 @@ h1 {
   transition: color 0.2s;
 }
 .back-link:hover { color: var(--accent); }
+
+.piece-list { max-width: 760px; width: 100%; }
+.piece {
+  display: flex;
+  gap: 2.25rem;
+  padding: 2.25rem 0;
+  border-bottom: 1px solid var(--rule);
+  text-decoration: none;
+  color: inherit;
+}
+.piece:first-child { padding-top: 0; }
+.piece-thumb {
+  flex-shrink: 0;
+  width: 108px;
+  height: 140px;
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+  background: #000;
+}
+.piece-thumb img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: 50% 18%;
+  filter: grayscale(1) contrast(1.08) brightness(0.8);
+  display: block;
+}
+.piece-thumb::after {
+  content:'';
+  position:absolute; inset:0;
+  background: linear-gradient(175deg, rgba(13,13,11,0.05) 0%, rgba(13,13,11,0.55) 78%, rgba(13,13,11,0.9) 100%),
+              linear-gradient(100deg, rgba(34,211,238,0.30), rgba(34,211,238,0.05));
+  mix-blend-mode: multiply;
+}
+.piece-body { flex: 1; min-width: 0; }
+.piece-meta {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink3);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+}
+.piece-title {
+  font-family: var(--serif);
+  font-size: 1.7rem;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.2;
+  margin-bottom: 0.6rem;
+  transition: color 0.2s;
+}
+.piece:hover .piece-title { color: var(--accent); }
+.piece-title em { font-style: italic; color: var(--accent); }
+.piece-desc {
+  font-size: 0.95rem;
+  font-weight: 300;
+  color: var(--ink2);
+  line-height: 1.65;
+  margin-bottom: 0.9rem;
+}
+.piece-cta {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--ink2);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.piece:hover .piece-cta { color: var(--accent); }
+.more-note {
+  margin-top: 2.5rem;
+  font-size: 0.9rem;
+  font-weight: 300;
+  color: var(--ink3);
+  line-height: 1.7;
+}
+@media (max-width: 560px) {
+  .piece { gap: 1.25rem; }
+  .piece-thumb { width: 76px; height: 100px; }
+  .piece-title { font-size: 1.35rem; }
+}
+
 footer {
   padding: 2rem 3rem;
   border-top: 1px solid var(--rule);
@@ -162,11 +247,59 @@ footer {
   </ul>
 </nav>
 
-<main class="main">
-  <div class="placeholder">
+<main class="main" style="align-items:flex-start; padding-top:10rem;">
+  <div class="piece-list">
     <div class="placeholder-tag">Writing</div>
-    <h1>Work in progress.</h1>
-    <p class="placeholder-body">
+    <h1 style="margin-bottom:2.5rem;">Selected writing.</h1>
+
+    <a class="piece" href="lawrence-ness-dissertation.pdf" target="_blank" rel="noopener">
+      <div class="piece-thumb"><img src="dh-lawrence.jpg" alt="D. H. Lawrence, c.1913"/></div>
+      <div class="piece-body">
+        <div class="piece-meta">Dissertation · BA English Language &amp; Literature · 2015</div>
+        <div class="piece-title">Lawrence<em>-ness</em></div>
+        <p class="piece-desc">
+          A corpus-driven investigation of nominalisation in D. H. Lawrence's literary style —
+          using corpus stylistics to show that the suffix <em>–ness</em> is a measurable part of
+          Lawrence's literary fingerprint, and that his coinages in <em>–ness</em> mark the exact
+          spots where his prose reaches for a feeling language doesn't already have a word for.
+        </p>
+        <div class="piece-cta">PDF ↗</div>
+      </div>
+    </a>
+
+    <a class="piece" href="keyness-and-narrative-gatsby.pdf" target="_blank" rel="noopener">
+      <div class="piece-thumb"><img src="gatsby1.jpg" alt="The Great Gatsby, original 1925 dust jacket" style="object-position:50% 22%;"/></div>
+      <div class="piece-body">
+        <div class="piece-meta">Essay · Corpus Stylistics · 2014</div>
+        <div class="piece-title">'Keyness' and <em>Narrative</em></div>
+        <p class="piece-desc">
+          Corpus stylistic insights into narration and 'keyness' in <em>The Great Gatsby</em> —
+          using key-word and concordance analysis to show that Fitzgerald's most 'literary'
+          words (twilight, trembling, enchanted) cluster in exactly the passages where Nick
+          Carraway's narration stops reporting the party and starts becoming it.
+        </p>
+        <div class="piece-cta">PDF ↗</div>
+      </div>
+    </a>
+
+    <a class="piece" href="lawrence-language-of-feelings.pdf" target="_blank" rel="noopener">
+      <div class="piece-thumb"><img src="lawrence1.jpg" alt="D. H. Lawrence portrait"/></div>
+      <div class="piece-body">
+        <div class="piece-meta">Essay · Corpus Stylistics · 2015</div>
+        <div class="piece-title">A Language for the <em>Feelings</em></div>
+        <p class="piece-desc">
+          A corpus stylistic study of Lawrence's attempt to build "a language for the feelings" in
+          <em>Sons and Lovers</em> and 'New Eve and Old Adam' — using Wmatrix semantic tagging and
+          Wordsmith key-word analysis to show that 'Anatomy and Physiology' is statistically
+          overwhelming (Log-Likelihood 2491.06), and that Lawrence's characters don't feel emotion
+          so much as undergo it: eyes contract, shoulders turn proud, faces lower gloomily, while
+          the feeling self all but disappears from the grammar.
+        </p>
+        <div class="piece-cta">PDF ↗</div>
+      </div>
+    </a>
+
+    <p class="more-note">
       New essays and notes will be published here. Topics will span epistemic infrastructure,
       deliberative systems, platform power, and the political economy of knowledge.
     </p>
